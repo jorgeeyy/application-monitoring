@@ -1,72 +1,76 @@
-import { useState, type FormEvent } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Link, Navigate } from 'react-router-dom'
+import { toast } from 'sonner'
 import { useAuth } from '../context/AuthContext'
+import { registerSchema, type RegisterFormData } from '../schemas'
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
+import { Button } from '../components/ui/button'
+import { Input } from '../components/ui/input'
+import { Label } from '../components/ui/label'
 
 export default function RegisterPage() {
   const { user, register } = useAuth()
-  const [form, setForm] = useState({ email: '', first_name: '', last_name: '', password: '', password_confirm: '' })
-  const [error, setError] = useState('')
-  const [submitting, setSubmitting] = useState(false)
+  const { register: reg, handleSubmit, formState: { errors, isSubmitting } } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
+  })
 
   if (user) return <Navigate to="/" replace />
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault()
-    setError('')
-    if (form.password !== form.password_confirm) {
-      setError('Passwords do not match')
-      return
-    }
-    setSubmitting(true)
+  const onSubmit = async (data: RegisterFormData) => {
     try {
-      await register(form)
+      await register(data)
+      toast.success('Account created')
     } catch (err: any) {
-      setError(err.response?.data?.password?.[0] || err.response?.data?.detail || 'Registration failed')
-    } finally {
-      setSubmitting(false)
+      toast.error(err.response?.data?.password?.[0] || err.response?.data?.detail || 'Registration failed')
     }
   }
 
-  const update = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) =>
-    setForm((f) => ({ ...f, [field]: e.target.value }))
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-100">
-      <div className="bg-white p-8 rounded-xl shadow-sm border border-slate-200 w-full max-w-sm">
-        <h1 className="text-2xl font-bold text-slate-900 mb-6">Create account</h1>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
-            <input type="email" value={form.email} onChange={update('email')} required className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
-          </div>
-          <div className="flex gap-3">
-            <div className="flex-1">
-              <label className="block text-sm font-medium text-slate-700 mb-1">First name</label>
-              <input type="text" value={form.first_name} onChange={update('first_name')} required className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      <Card className="w-full max-w-sm">
+        <CardHeader>
+          <CardTitle className="text-2xl">Create account</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" type="email" {...reg('email')} />
+              {errors.email && <p className="text-sm text-red-600">{errors.email.message}</p>}
             </div>
-            <div className="flex-1">
-              <label className="block text-sm font-medium text-slate-700 mb-1">Last name</label>
-              <input type="text" value={form.last_name} onChange={update('last_name')} required className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <div className="flex gap-3">
+              <div className="flex-1 space-y-2">
+                <Label htmlFor="first_name">First name</Label>
+                <Input id="first_name" {...reg('first_name')} />
+                {errors.first_name && <p className="text-sm text-red-600">{errors.first_name.message}</p>}
+              </div>
+              <div className="flex-1 space-y-2">
+                <Label htmlFor="last_name">Last name</Label>
+                <Input id="last_name" {...reg('last_name')} />
+                {errors.last_name && <p className="text-sm text-red-600">{errors.last_name.message}</p>}
+              </div>
             </div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Password</label>
-            <input type="password" value={form.password} onChange={update('password')} required minLength={8} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Confirm password</label>
-            <input type="password" value={form.password_confirm} onChange={update('password_confirm')} required className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
-          </div>
-          {error && <p className="text-sm text-red-600">{error}</p>}
-          <button type="submit" disabled={submitting} className="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 cursor-pointer">
-            {submitting ? 'Creating...' : 'Create account'}
-          </button>
-        </form>
-        <p className="mt-4 text-sm text-center text-slate-500">
-          Already have an account?{' '}
-          <Link to="/login" className="text-blue-600 hover:underline">Sign in</Link>
-        </p>
-      </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input id="password" type="password" {...reg('password')} />
+              {errors.password && <p className="text-sm text-red-600">{errors.password.message}</p>}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password_confirm">Confirm password</Label>
+              <Input id="password_confirm" type="password" {...reg('password_confirm')} />
+              {errors.password_confirm && <p className="text-sm text-red-600">{errors.password_confirm.message}</p>}
+            </div>
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting ? 'Creating...' : 'Create account'}
+            </Button>
+          </form>
+          <p className="mt-4 text-sm text-center text-slate-500">
+            Already have an account?{' '}
+            <Link to="/login" className="text-blue-600 hover:underline">Sign in</Link>
+          </p>
+        </CardContent>
+      </Card>
     </div>
   )
 }

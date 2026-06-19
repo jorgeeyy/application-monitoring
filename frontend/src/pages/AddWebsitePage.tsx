@@ -1,79 +1,67 @@
-import { useState, type FormEvent } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useNavigate, Link } from 'react-router-dom'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
 import { createWebsite } from '../api/websites'
+import { websiteSchema, type WebsiteFormData } from '../schemas'
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
+import { Button } from '../components/ui/button'
+import { Input } from '../components/ui/input'
+import { Label } from '../components/ui/label'
 
 export default function AddWebsitePage() {
   const navigate = useNavigate()
-  const [form, setForm] = useState({ name: '', url: '', check_interval: 60 })
-  const [error, setError] = useState('')
+  const queryClient = useQueryClient()
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<WebsiteFormData>({
+    resolver: zodResolver(websiteSchema),
+    defaultValues: { check_interval: 60 },
+  })
 
   const mutation = useMutation({
-    mutationFn: () => createWebsite(form),
-    onSuccess: (data) => navigate(`/websites/${data.id}`),
+    mutationFn: (data: WebsiteFormData) => createWebsite(data),
+    onSuccess: (website) => {
+      queryClient.invalidateQueries({ queryKey: ['websites'] })
+      toast.success('Website added')
+      navigate(`/websites/${website.id}`)
+    },
     onError: (err: any) => {
-      setError(err.response?.data?.url?.[0] || err.response?.data?.detail || 'Failed to create website')
+      toast.error(err.response?.data?.url?.[0] || err.response?.data?.detail || 'Failed to add website')
     },
   })
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault()
-    setError('')
-    mutation.mutate()
-  }
-
-  const update = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) =>
-    setForm((f) => ({ ...f, [field]: field === 'check_interval' ? Number(e.target.value) : e.target.value }))
+  const onSubmit = (data: WebsiteFormData) => mutation.mutate(data)
 
   return (
     <div className="max-w-lg">
       <Link to="/" className="text-sm text-blue-600 hover:underline mb-4 block">&larr; Back</Link>
-      <h1 className="text-2xl font-bold text-slate-900 mb-6">Add Website</h1>
-      <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-slate-200 p-6 space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Name</label>
-          <input
-            type="text"
-            value={form.name}
-            onChange={update('name')}
-            required
-            placeholder="My Website"
-            className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">URL</label>
-          <input
-            type="url"
-            value={form.url}
-            onChange={update('url')}
-            required
-            placeholder="https://example.com"
-            className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">
-            Check interval (seconds)
-          </label>
-          <input
-            type="number"
-            value={form.check_interval}
-            onChange={update('check_interval')}
-            min={10}
-            max={3600}
-            className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-        {error && <p className="text-sm text-red-600">{error}</p>}
-        <button
-          type="submit"
-          disabled={mutation.isPending}
-          className="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 cursor-pointer"
-        >
-          {mutation.isPending ? 'Adding...' : 'Add Website'}
-        </button>
-      </form>
+      <Card>
+        <CardHeader>
+          <CardTitle>Add Website</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Name</Label>
+              <Input id="name" placeholder="My Website" {...register('name')} />
+              {errors.name && <p className="text-sm text-red-600">{errors.name.message}</p>}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="url">URL</Label>
+              <Input id="url" type="url" placeholder="https://example.com" {...register('url')} />
+              {errors.url && <p className="text-sm text-red-600">{errors.url.message}</p>}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="check_interval">Check interval (seconds)</Label>
+              <Input id="check_interval" type="number" min={10} max={3600} {...register('check_interval', { valueAsNumber: true })} />
+              {errors.check_interval && <p className="text-sm text-red-600">{errors.check_interval.message}</p>}
+            </div>
+            <Button type="submit" className="w-full" disabled={isSubmitting || mutation.isPending}>
+              {mutation.isPending ? 'Adding...' : 'Add Website'}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   )
 }
