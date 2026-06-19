@@ -10,7 +10,7 @@ from monitoring.models import UptimeCheck
 def check_website(website):
     start = time.time()
     try:
-        with httpx.Client(timeout=10.0, follow_redirects=True) as client:
+        with httpx.Client(timeout=10.0, follow_redirects=True, verify=False) as client:
             response = client.get(website.url)
             elapsed_ms = int((time.time() - start) * 1000)
             is_up = 200 <= response.status_code < 400
@@ -21,15 +21,6 @@ def check_website(website):
                 is_up=is_up,
             )
             return check
-    except (ssl.SSLCertVerificationError, ssl.SSLError) as e:
-        elapsed_ms = int((time.time() - start) * 1000)
-        return UptimeCheck.objects.create(
-            website=website,
-            is_up=False,
-            status_code=0,
-            response_time_ms=elapsed_ms,
-            error_message=f'SSL Error: {e.verify_message if hasattr(e, "verify_message") else str(e)}',
-        )
     except httpx.TimeoutException:
         elapsed_ms = int((time.time() - start) * 1000)
         return UptimeCheck.objects.create(

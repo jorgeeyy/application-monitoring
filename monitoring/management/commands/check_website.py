@@ -7,7 +7,7 @@ class Command(BaseCommand):
     help = 'Manually check a website and store the result'
 
     def add_arguments(self, parser):
-        parser.add_argument('website_id', type=int, help='ID of the website to check')
+        parser.add_argument('website_id', type=str, help='UUID of the website to check')
 
     def handle(self, *args, **options):
         website_id = options['website_id']

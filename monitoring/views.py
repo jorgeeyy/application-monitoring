@@ -79,3 +79,14 @@ class WebsiteViewSet(viewsets.ModelViewSet):
         result = check_ssl(website)
         serializer = SSLCheckSerializer(result)
         return Response(serializer.data)
+
+    @action(detail=True, methods=['post'])
+    def check(self, request, pk=None):
+        website = self.get_object()
+        from monitoring.services.checker import check_website, check_ssl
+        uptime = check_website(website)
+        ssl = check_ssl(website)
+        return Response({
+            'uptime': UptimeCheckSerializer(uptime).data,
+            'ssl': SSLCheckSerializer(ssl).data,
+        }, status=201)
