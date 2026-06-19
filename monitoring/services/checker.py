@@ -10,7 +10,16 @@ from monitoring.models import UptimeCheck
 def check_website(website):
     start = time.time()
     try:
-        with httpx.Client(timeout=10.0, follow_redirects=True, verify=False) as client:
+        with httpx.Client(
+            timeout=10.0,
+            follow_redirects=True,
+            verify=False,
+            headers={
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                'Accept-Language': 'en-US,en;q=0.5',
+            },
+        ) as client:
             response = client.get(website.url)
             elapsed_ms = int((time.time() - start) * 1000)
             is_up = 200 <= response.status_code < 400
