@@ -22,11 +22,6 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (res) => res,
   (err) => {
-    if (err.response?.status === 401 || err.response?.status === 403) {
-      if (!window.location.pathname.startsWith('/login') && !window.location.pathname.startsWith('/register')) {
-        window.location.href = '/login'
-      }
-    }
     return Promise.reject(err)
   }
 )

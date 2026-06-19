@@ -129,13 +129,13 @@ export default function SSLPage() {
   const valid = websites?.filter((w) => w.latest_check?.is_up === true).length ?? 0
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-4 sm:space-y-6 animate-fade-in">
       <div>
-        <h1 className="text-2xl font-bold gradient-text">SSL Certificates</h1>
-        <p className="text-sm text-muted-foreground mt-1">Monitor SSL certificate status across all your services.</p>
+        <h1 className="text-xl sm:text-2xl font-bold gradient-text">SSL Certificates</h1>
+        <p className="text-xs sm:text-sm text-muted-foreground mt-1">Monitor SSL certificate status across all your services.</p>
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
         {[
           { label: 'Total Certificates', value: total, icon: Shield, color: 'from-blue-500/20 to-blue-600/10', iconColor: 'text-blue-400', iconBg: 'bg-blue-500/10' },
           { label: 'Valid', value: valid, icon: CheckCircle2, color: 'from-green-500/20 to-green-600/10', iconColor: 'text-green-400', iconBg: 'bg-green-500/10' },

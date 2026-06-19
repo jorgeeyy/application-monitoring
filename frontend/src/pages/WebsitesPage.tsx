@@ -69,34 +69,34 @@ export default function WebsitesPage() {
   const totalDown = filtered.filter((w) => w.latest_check?.is_up === false).length
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      <div className="flex items-end justify-between">
+    <div className="space-y-4 sm:space-y-6 animate-fade-in">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
         <div>
-          <h1 className="text-2xl font-bold gradient-text">Monitors</h1>
-          <p className="text-sm text-muted-foreground mt-1">Manage and track your service uptime.</p>
+          <h1 className="text-xl sm:text-2xl font-bold gradient-text">Monitors</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1">Manage and track your service uptime.</p>
         </div>
       </div>
 
-      <div className="flex items-center gap-4">
-        <div className="flex items-center gap-2 px-4 py-2 rounded-xl glass-card">
+      <div className="flex flex-wrap items-center gap-2 sm:gap-4">
+        <div className="flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl glass-card">
           <div className="w-2 h-2 rounded-full bg-green-400 shadow-[0_0_6px_rgba(34,197,94,0.5)]" />
           <span className="text-xs font-medium text-foreground">{totalUp} Up</span>
         </div>
-        <div className="flex items-center gap-2 px-4 py-2 rounded-xl glass-card">
+        <div className="flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl glass-card">
           <div className="w-2 h-2 rounded-full bg-red-400 shadow-[0_0_6px_rgba(239,68,68,0.5)]" />
           <span className="text-xs font-medium text-foreground">{totalDown} Down</span>
         </div>
-        <div className="flex items-center gap-2 px-4 py-2 rounded-xl glass-card">
+        <div className="flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl glass-card">
           <span className="text-xs font-medium text-muted-foreground">{filtered.length} Total</span>
         </div>
       </div>
 
       <div className="glass-card rounded-2xl overflow-hidden">
-        <div className="px-6 py-5 border-b border-white/5 flex items-center justify-between gap-4">
+        <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-white/5 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
-              placeholder="Search monitors by name or URL..."
+              placeholder="Search monitors..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-10 h-10 bg-white/[0.03] border-white/5 focus:border-accent/30 focus:bg-white/[0.05] rounded-xl"
@@ -105,7 +105,7 @@ export default function WebsitesPage() {
           <div className="flex items-center gap-2">
             <Button size="sm" variant="outline" className="border-white/5 hover:bg-white/[0.03]">
               <Filter className="w-3.5 h-3.5" />
-              Filter
+              <span className="hidden sm:inline">Filter</span>
             </Button>
             <Button size="sm" asChild className="bg-gradient-to-r from-accent to-blue-600 hover:shadow-lg hover:shadow-accent/20">
               <Link to="/websites/new">+ Add Monitor</Link>
@@ -114,8 +114,8 @@ export default function WebsitesPage() {
         </div>
 
         {filtered.length > 0 ? (
-          <div>
-            <table className="w-full">
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[640px]">
               <thead>
                 <tr className="border-b border-white/5 text-[11px] text-muted-foreground uppercase tracking-wider">
                   <th className="text-left px-6 py-3 font-semibold">Name</th>
@@ -188,7 +188,7 @@ export default function WebsitesPage() {
                 })}
               </tbody>
             </table>
-            <div className="px-6 py-4 border-t border-white/5 flex items-center justify-between">
+            <div className="px-4 sm:px-6 py-3 sm:py-4 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-2">
               <p className="text-xs text-muted-foreground">
                 Showing 1 to {filtered.length} of {filtered.length} monitors
               </p>

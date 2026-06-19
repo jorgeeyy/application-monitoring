@@ -80,7 +80,7 @@ export default function Sidebar() {
   }
 
   return (
-    <aside className="w-60 h-full flex flex-col bg-linear-to-b from-sidebar to-[#060a13] border-r border-white/4 select-none">
+    <aside className="w-60 h-full flex flex-col bg-linear-to-b from-sidebar to-[#060a13] border-r border-white/4 select-none shrink-0">
       <div className="h-16 flex items-center px-5 border-b border-white/4">
         <div className="w-9 h-9 rounded-xl bg-linear-to-br from-accent via-blue-500 to-purple-600 flex items-center justify-center mr-3 shadow-lg shadow-accent/30">
           <Activity className="w-5 h-5 text-white" />

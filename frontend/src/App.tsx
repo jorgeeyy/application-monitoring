@@ -4,8 +4,7 @@ import { AuthProvider } from './context/AuthContext'
 import { Toaster } from './components/ui/sonner'
 import Layout from './components/Layout'
 import LandingPage from './pages/LandingPage'
-import LoginPage from './pages/LoginPage'
-import RegisterPage from './pages/RegisterPage'
+import AuthPage from './pages/AuthPage'
 import DashboardPage from './pages/DashboardPage'
 import WebsitesPage from './pages/WebsitesPage'
 import WebsiteDetailPage from './pages/WebsiteDetailPage'
@@ -26,8 +25,8 @@ export default function App() {
           <Toaster />
           <Routes>
             <Route path="/" element={<LandingPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/login" element={<AuthPage />} />
+            <Route path="/register" element={<AuthPage />} />
             <Route element={<Layout />}>
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/websites" element={<WebsitesPage />} />

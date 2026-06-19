@@ -152,26 +152,26 @@ export default function WebsiteDetailPage() {
     })) ?? []
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      <div className="flex items-start justify-between">
-        <div>
+    <div className="space-y-4 sm:space-y-6 animate-fade-in">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+        <div className="min-w-0">
           <Link to="/websites" className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mb-3 group">
             <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
             All Monitors
           </Link>
-          <div className="flex items-center gap-4">
-            <h1 className="text-2xl font-bold gradient-text">{website.url}</h1>
-            <a href={website.url} target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-white/[0.05] transition-all">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <h1 className="text-lg sm:text-2xl font-bold gradient-text truncate">{website.url}</h1>
+            <a href={website.url} target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-white/[0.05] transition-all shrink-0">
               <ExternalLink className="w-4 h-4" />
             </a>
           </div>
-          <div className="flex items-center gap-4 mt-2">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-2">
             <span className={`inline-flex items-center gap-2 text-xs font-semibold px-3 py-1 rounded-full border ${badge.bg} ${badge.border} ${badge.text}`}>
               <span className={`w-2 h-2 rounded-full ${badge.dot} ${lastCheck?.is_up ? 'shadow-[0_0_6px_rgba(34,197,94,0.5)]' : lastCheck?.is_up === false ? 'shadow-[0_0_6px_rgba(239,68,68,0.5)]' : ''}`} />
               {badge.label}
             </span>
             {lastCheck && (
-              <span className="text-xs text-muted-foreground">
+              <span className="text-[11px] sm:text-xs text-muted-foreground">
                 {lastCheck.response_time_ms != null && `${lastCheck.response_time_ms}ms`}
                 {lastCheck.response_time_ms != null && lastCheck.status_code && ' · '}
                 {lastCheck.status_code && `${lastCheck.status_code}`}
@@ -181,7 +181,7 @@ export default function WebsiteDetailPage() {
             )}
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           <Button
             size="sm"
             onClick={() => checkMutation.mutate()}
@@ -189,7 +189,8 @@ export default function WebsiteDetailPage() {
             className="bg-gradient-to-r from-accent to-blue-600 hover:shadow-lg hover:shadow-accent/20"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${checkMutation.isPending ? 'animate-spin' : ''}`} />
-            {checkMutation.isPending ? 'Checking...' : 'Check now'}
+            <span className="hidden sm:inline">{checkMutation.isPending ? 'Checking...' : 'Check now'}</span>
+            <span className="sm:hidden">{checkMutation.isPending ? '...' : 'Check'}</span>
           </Button>
           <Button size="sm" variant="outline" onClick={() => setShowDelete(true)} className="border-white/5 hover:bg-red-500/10 hover:border-red-500/20 hover:text-red-400">
             <Trash2 className="w-3.5 h-3.5" />
@@ -197,23 +198,23 @@ export default function WebsiteDetailPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="glass-card rounded-2xl overflow-hidden">
-          <div className="px-6 py-4 border-b border-white/5">
+          <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-white/5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Activity className="w-4 h-4 text-accent" />
-                <h2 className="text-sm font-semibold text-foreground">Response Time</h2>
+                <h2 className="text-xs sm:text-sm font-semibold text-foreground">Response Time</h2>
               </div>
-              <div className="flex items-center gap-4 text-[11px]">
+              <div className="flex items-center gap-3 sm:gap-4 text-[10px] sm:text-[11px]">
                 <span className="text-muted-foreground">Last: <span className={getResponseTimeColor(lastCheck?.response_time_ms)}>{lastCheck?.response_time_ms ?? '-'}ms</span></span>
                 <span className="text-muted-foreground">Avg: <span className="text-foreground font-medium">{stats?.average_response_time_ms ?? '-'}ms</span></span>
               </div>
             </div>
           </div>
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             {chartData.length > 0 ? (
-              <ResponsiveContainer width="100%" height={180}>
+              <ResponsiveContainer width="100%" height={160}>
                 <AreaChart data={chartData}>
                   <defs>
                     <linearGradient id="colorResponse" x1="0" y1="0" x2="0" y2="1">
@@ -247,13 +248,13 @@ export default function WebsiteDetailPage() {
         </div>
 
         <div className="glass-card rounded-2xl overflow-hidden">
-          <div className="px-6 py-4 border-b border-white/5">
+          <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-white/5">
             <div className="flex items-center gap-2">
               <Shield className="w-4 h-4 text-accent" />
-              <h2 className="text-sm font-semibold text-foreground">SSL Certificate</h2>
+              <h2 className="text-xs sm:text-sm font-semibold text-foreground">SSL Certificate</h2>
             </div>
           </div>
-          <div className="p-6 flex flex-col items-center">
+          <div className="p-4 sm:p-6 flex flex-col items-center">
             {ssl ? (
               <>
                 <SSLCircle daysRemaining={ssl.days_remaining} isValid={ssl.is_valid} />
@@ -285,13 +286,13 @@ export default function WebsiteDetailPage() {
         </div>
 
         <div className="glass-card rounded-2xl overflow-hidden">
-          <div className="px-6 py-4 border-b border-white/5">
+          <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-white/5">
             <div className="flex items-center gap-2">
               <TrendingUp className="w-4 h-4 text-accent" />
-              <h2 className="text-sm font-semibold text-foreground">24h Uptime History</h2>
+              <h2 className="text-xs sm:text-sm font-semibold text-foreground">24h Uptime History</h2>
             </div>
           </div>
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             {stats ? (
               <div className="space-y-5">
                 <div className="text-center">
@@ -338,18 +339,18 @@ export default function WebsiteDetailPage() {
       </div>
 
       <div className="glass-card rounded-2xl overflow-hidden">
-        <div className="px-6 py-5 border-b border-white/5 flex items-center justify-between">
+        <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <Clock className="w-4 h-4 text-accent" />
-            <h2 className="text-base font-semibold text-foreground">Event Log</h2>
+            <h2 className="text-sm sm:text-base font-semibold text-foreground">Event Log</h2>
           </div>
           {checks && checks.length > 0 && (
             <span className="text-xs text-muted-foreground">Last {Math.min(checks.length, 20)} events</span>
           )}
         </div>
         {checks && checks.length > 0 ? (
-          <div>
-            <table className="w-full">
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[500px]">
               <thead>
                 <tr className="border-b border-white/5 text-[11px] text-muted-foreground uppercase tracking-wider">
                   <th className="text-left px-6 py-3 font-semibold">Time</th>

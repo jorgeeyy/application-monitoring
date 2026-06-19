@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { Navigate } from 'react-router-dom'
+import { useState } from 'react'
 import {
   Activity,
   ArrowRight,
@@ -12,10 +13,13 @@ import {
   Lock,
   TrendingUp,
   CheckCircle2,
+  Menu,
+  X,
 } from 'lucide-react'
 
 export default function LandingPage() {
   const { user } = useAuth()
+  const [mobileNav, setMobileNav] = useState(false)
 
   if (user) return <Navigate to="/dashboard" replace />
 
@@ -90,8 +94,8 @@ export default function LandingPage() {
     <div className="min-h-screen bg-[#050a14] text-white">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.04] bg-[#050a14]/80 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-8 sm:gap-10">
             <Link to="/" className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center">
                 <Activity className="w-4.5 h-4.5 text-white" />
@@ -110,7 +114,7 @@ export default function LandingPage() {
               ))}
             </nav>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="hidden sm:flex items-center gap-4">
             <Link
               to="/login"
               className="text-[13px] font-medium text-white/60 hover:text-white transition-colors"
@@ -124,73 +128,110 @@ export default function LandingPage() {
               Book a Demo
             </Link>
           </div>
+          <button
+            onClick={() => setMobileNav(!mobileNav)}
+            className="sm:hidden p-2 rounded-lg text-white/60 hover:text-white hover:bg-white/[0.05] transition-colors cursor-pointer"
+          >
+            {mobileNav ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
         </div>
+        {/* Mobile nav */}
+        {mobileNav && (
+          <div className="sm:hidden border-t border-white/[0.04] bg-[#050a14]/95 backdrop-blur-xl">
+            <div className="px-4 py-4 space-y-1">
+              {navLinks.map(({ label, href }) => (
+                <a
+                  key={label}
+                  href={href}
+                  onClick={() => setMobileNav(false)}
+                  className="block px-3 py-2.5 rounded-lg text-sm text-white/60 hover:text-white hover:bg-white/[0.04] transition-colors"
+                >
+                  {label}
+                </a>
+              ))}
+              <div className="pt-3 border-t border-white/[0.04] flex flex-col gap-2">
+                <Link
+                  to="/login"
+                  className="block px-3 py-2.5 rounded-lg text-sm text-white/60 hover:text-white hover:bg-white/[0.04] transition-colors text-center"
+                >
+                  Sign in
+                </Link>
+                <Link
+                  to="/register"
+                  className="block px-3 py-2.5 rounded-lg text-sm font-semibold bg-white text-[#050a14] hover:bg-white/90 transition-colors text-center"
+                >
+                  Book a Demo
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-6 relative overflow-hidden">
+      <section className="pt-28 sm:pt-32 pb-16 sm:pb-20 px-4 sm:px-6 relative overflow-hidden">
         <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-cyan-500/[0.03] rounded-full blur-[120px] pointer-events-none" />
         <div className="absolute top-40 right-0 w-[400px] h-[400px] bg-blue-500/[0.03] rounded-full blur-[100px] pointer-events-none" />
 
-        <div className="max-w-7xl mx-auto grid grid-cols-2 gap-12 items-center relative z-10">
-          <div className="space-y-8">
-            <h1 className="text-[52px] font-bold leading-[1.1] tracking-tight">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center relative z-10">
+          <div className="space-y-6 sm:space-y-8">
+            <h1 className="text-3xl sm:text-4xl md:text-[52px] font-bold leading-[1.1] tracking-tight">
               Monitoring for the modern{' '}
               <span className="bg-gradient-to-r from-cyan-400 via-teal-400 to-green-400 bg-clip-text text-transparent">
                 SRE
               </span>
             </h1>
-            <p className="text-lg text-white/50 leading-relaxed max-w-lg">
+            <p className="text-base sm:text-lg text-white/50 leading-relaxed max-w-lg">
               Total-time visibility into your entire infrastructure. Detect outages in seconds, identify slowdowns, and keep systems running at peak performance.
             </p>
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
               <Link
                 to="/register"
-                className="inline-flex items-center gap-2 bg-white text-[#050a14] px-6 py-3 rounded-lg text-sm font-semibold hover:bg-white/90 transition-colors"
+                className="inline-flex items-center justify-center gap-2 bg-white text-[#050a14] px-6 py-3 rounded-lg text-sm font-semibold hover:bg-white/90 transition-colors"
               >
                 Get Started Free
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
                 to="/login"
-                className="inline-flex items-center gap-2 border border-white/15 text-white px-6 py-3 rounded-lg text-sm font-semibold hover:bg-white/[0.04] transition-colors"
+                className="inline-flex items-center justify-center gap-2 border border-white/15 text-white px-6 py-3 rounded-lg text-sm font-semibold hover:bg-white/[0.04] transition-colors"
               >
                 Book a Demo
               </Link>
             </div>
             <div className="flex items-center gap-2 text-xs text-white/30">
               <CheckCircle2 className="w-3.5 h-3.5" />
-              <span>25,000+ engineers AND STAR CITIZEN</span>
+              <span>25,000+ engineers trust AppMonitor</span>
             </div>
           </div>
 
           <div className="relative">
             <div className="rounded-2xl border border-white/[0.06] bg-gradient-to-br from-white/[0.04] to-transparent p-1 overflow-hidden">
-              <div className="rounded-xl bg-[#0a1020] border border-white/[0.04] p-6 space-y-4">
+              <div className="rounded-xl bg-[#0a1020] border border-white/[0.04] p-4 sm:p-6 space-y-4">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-3 h-3 rounded-full bg-red-500/80" />
                   <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
                   <div className="w-3 h-3 rounded-full bg-green-500/80" />
-                  <span className="text-[11px] text-white/30 ml-2">appmonitor.io/dashboard</span>
+                  <span className="text-[11px] text-white/30 ml-2 hidden sm:inline">appmonitor.io/dashboard</span>
                 </div>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-3 gap-2 sm:gap-3">
                   {[
                     { label: 'Uptime', value: '99.98%', color: 'text-green-400' },
                     { label: 'Avg Response', value: '142ms', color: 'text-cyan-400' },
                     { label: 'Checks Today', value: '2,847', color: 'text-blue-400' },
                   ].map(({ label, value, color }) => (
-                    <div key={label} className="bg-white/[0.03] rounded-lg p-4 border border-white/[0.04]">
-                      <p className="text-[10px] text-white/30 uppercase tracking-wider mb-1">{label}</p>
-                      <p className={`text-xl font-bold ${color}`}>{value}</p>
+                    <div key={label} className="bg-white/[0.03] rounded-lg p-3 sm:p-4 border border-white/[0.04]">
+                      <p className="text-[9px] sm:text-[10px] text-white/30 uppercase tracking-wider mb-1">{label}</p>
+                      <p className={`text-base sm:text-xl font-bold ${color}`}>{value}</p>
                     </div>
                   ))}
                 </div>
                 <div className="bg-white/[0.03] rounded-lg p-4 border border-white/[0.04]">
                   <div className="flex items-center justify-between mb-3">
                     <span className="text-xs text-white/40">Response Time (24h)</span>
-                    <span className="text-xs text-green-400 font-medium">-12% from yesterday</span>
+                    <span className="text-xs text-green-400 font-medium">-12%</span>
                   </div>
-                  <div className="h-24 flex items-end gap-1">
+                  <div className="h-20 sm:h-24 flex items-end gap-1">
                     {Array.from({ length: 24 }, (_, i) => {
                       const h = 20 + Math.random() * 60
                       const isHigh = h > 60
@@ -217,14 +258,14 @@ export default function LandingPage() {
       </section>
 
       {/* Logo Strip */}
-      <section className="py-12 border-y border-white/[0.04]">
-        <div className="max-w-7xl mx-auto px-6">
-          <p className="text-center text-[11px] font-semibold text-white/20 uppercase tracking-[0.2em] mb-8">
+      <section className="py-10 sm:py-12 border-y border-white/[0.04]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <p className="text-center text-[11px] font-semibold text-white/20 uppercase tracking-[0.2em] mb-6 sm:mb-8">
             Trusted by the world's most innovative teams
           </p>
-          <div className="flex items-center justify-center gap-16">
+          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10 md:gap-16">
             {trustedLogos.map((logo) => (
-              <span key={logo} className="text-lg font-bold text-white/15 tracking-tight">
+              <span key={logo} className="text-base sm:text-lg font-bold text-white/15 tracking-tight">
                 {logo}
               </span>
             ))}
@@ -233,20 +274,20 @@ export default function LandingPage() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-24 px-6">
+      <section id="features" className="py-16 sm:py-24 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold tracking-tight mb-4">Engineered for Reliability</h2>
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight mb-4">Engineered for Reliability</h2>
             <p className="text-sm text-white/40 max-w-md mx-auto">
               A full suite of reliability tools, built from the ground up to give you complete visibility and peace of mind.
             </p>
           </div>
 
-          <div className="grid grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
             {features.map(({ icon: Icon, title, desc, color, bgColor }, index) => (
               <div
                 key={title}
-                className="group rounded-2xl border border-white/[0.06] bg-gradient-to-br from-white/[0.03] to-transparent p-6 hover:border-white/[0.1] hover:bg-white/[0.04] transition-all duration-300 animate-fade-in"
+                className="group rounded-2xl border border-white/[0.06] bg-gradient-to-br from-white/[0.03] to-transparent p-5 sm:p-6 hover:border-white/[0.1] hover:bg-white/[0.04] transition-all duration-300 animate-fade-in"
                 style={{ animationDelay: `${index * 80}ms` }}
               >
                 <div className={`w-10 h-10 rounded-xl ${bgColor} flex items-center justify-center mb-4`}>
@@ -261,15 +302,15 @@ export default function LandingPage() {
       </section>
 
       {/* Solutions Section */}
-      <section id="solutions" className="py-24 px-6 border-t border-white/[0.04]">
-        <div className="max-w-7xl mx-auto grid grid-cols-2 gap-16 items-center">
-          <div className="space-y-8">
+      <section id="solutions" className="py-16 sm:py-24 px-4 sm:px-6 border-t border-white/[0.04]">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+          <div className="space-y-6 sm:space-y-8">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-semibold">
               <Activity className="w-3 h-3" />
               Platform
             </div>
-            <h2 className="text-3xl font-bold tracking-tight">Unrivaled Data Depth</h2>
-            <p className="text-base text-white/40 leading-relaxed">
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Unrivaled Data Depth</h2>
+            <p className="text-sm sm:text-base text-white/40 leading-relaxed">
               Every check produces a rich log entry. Combine that with 1+ year retention, and you can find and fix issues you never knew existed.
             </p>
             <div className="space-y-4">
@@ -291,11 +332,11 @@ export default function LandingPage() {
           </div>
 
           <div className="rounded-2xl border border-white/[0.06] bg-gradient-to-br from-white/[0.03] to-transparent p-1">
-            <div className="rounded-xl bg-[#0a1020] border border-white/[0.04] p-6">
+            <div className="rounded-xl bg-[#0a1020] border border-white/[0.04] p-5 sm:p-6">
               <div className="flex items-center justify-between mb-6">
                 <div>
                   <p className="text-xs text-white/30 uppercase tracking-wider">Response Time (ms)</p>
-                  <p className="text-3xl font-bold text-cyan-400 mt-1">142ms</p>
+                  <p className="text-2xl sm:text-3xl font-bold text-cyan-400 mt-1">142ms</p>
                 </div>
                 <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-medium">
                   <TrendingUp className="w-3 h-3" />
@@ -334,17 +375,17 @@ export default function LandingPage() {
       </section>
 
       {/* Metrics Section */}
-      <section className="py-20 px-6 border-t border-white/[0.04]">
+      <section className="py-16 sm:py-20 px-4 sm:px-6 border-t border-white/[0.04]">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {metrics.map(({ value, label, description }) => (
               <div
                 key={label}
-                className="text-center p-6 rounded-2xl border border-white/[0.06] bg-gradient-to-br from-white/[0.03] to-transparent"
+                className="text-center p-4 sm:p-6 rounded-2xl border border-white/[0.06] bg-gradient-to-br from-white/[0.03] to-transparent"
               >
-                <p className="text-3xl font-bold text-white mb-1">{value}</p>
-                <p className="text-sm font-semibold text-white/60">{label}</p>
-                <p className="text-xs text-white/30 mt-1">{description}</p>
+                <p className="text-xl sm:text-3xl font-bold text-white mb-1">{value}</p>
+                <p className="text-xs sm:text-sm font-semibold text-white/60">{label}</p>
+                <p className="text-[10px] sm:text-xs text-white/30 mt-1">{description}</p>
               </div>
             ))}
           </div>
@@ -352,22 +393,22 @@ export default function LandingPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 px-6">
+      <section className="py-16 sm:py-24 px-4 sm:px-6">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl font-bold tracking-tight mb-4">Ready to secure your uptime?</h2>
-          <p className="text-base text-white/40 mb-8 max-w-lg mx-auto">
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight mb-4">Ready to secure your uptime?</h2>
+          <p className="text-sm sm:text-base text-white/40 mb-8 max-w-lg mx-auto">
             Join 10,000+ engineering teams who trust AppMonitor to keep their systems running. Start monitoring in minutes.
           </p>
-          <div className="flex items-center justify-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
             <Link
               to="/register"
-              className="inline-flex items-center gap-2 border border-white/15 text-white px-7 py-3.5 rounded-lg text-sm font-semibold hover:bg-white/[0.04] transition-colors"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 border border-white/15 text-white px-7 py-3.5 rounded-lg text-sm font-semibold hover:bg-white/[0.04] transition-colors"
             >
               Create Free Account
             </Link>
             <Link
               to="/login"
-              className="inline-flex items-center gap-2 bg-white text-[#050a14] px-7 py-3.5 rounded-lg text-sm font-semibold hover:bg-white/90 transition-colors"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white text-[#050a14] px-7 py-3.5 rounded-lg text-sm font-semibold hover:bg-white/90 transition-colors"
             >
               Talk to Sales
             </Link>
@@ -376,9 +417,9 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-6 border-t border-white/[0.04]">
+      <footer className="py-10 sm:py-12 px-4 sm:px-6 border-t border-white/[0.04]">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-6 gap-8 mb-12">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 mb-10 sm:mb-12">
             <div className="col-span-2 space-y-4">
               <Link to="/" className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center">
@@ -422,11 +463,11 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
-          <div className="pt-8 border-t border-white/[0.04] flex items-center justify-between">
+          <div className="pt-8 border-t border-white/[0.04] flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-[11px] text-white/20">
-              © 2026 AppMonitor Inc. All rights reserved.
+              &copy; 2026 AppMonitor Inc. All rights reserved.
             </p>
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-4 sm:gap-6">
               {['Twitter', 'GitHub', 'LinkedIn', 'Discord'].map((social) => (
                 <a key={social} href="#" className="text-[11px] text-white/20 hover:text-white/40 transition-colors">
                   {social}

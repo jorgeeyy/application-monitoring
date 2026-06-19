@@ -153,11 +153,11 @@ export default function DashboardPage() {
   ]
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      <div className="flex items-end justify-between">
+    <div className="space-y-4 sm:space-y-6 animate-fade-in">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold gradient-text">Overview</h1>
-          <p className="text-sm text-muted-foreground mt-1">System status and operational metrics for the last 24 hours.</p>
+          <h1 className="text-xl sm:text-2xl font-bold gradient-text">Overview</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1">System status and operational metrics for the last 24 hours.</p>
         </div>
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
@@ -165,7 +165,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {statCards.map(({ label, value, icon: Icon, iconColor, iconBg, trend, trendUp }, index) => (
           <div
             key={label}
@@ -187,15 +187,15 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
-        <div className="col-span-2 glass-card rounded-2xl overflow-hidden">
-          <div className="px-6 py-5 border-b border-white/5">
-            <div className="flex items-center justify-between">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="lg:col-span-2 glass-card rounded-2xl overflow-hidden">
+          <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-white/5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
-                <h2 className="text-base font-semibold text-foreground">Global Uptime & Latency</h2>
-                <p className="text-xs text-muted-foreground mt-0.5">Combined metrics across all monitors</p>
+                <h2 className="text-sm sm:text-base font-semibold text-foreground">Global Uptime & Latency</h2>
+                <p className="text-[11px] sm:text-xs text-muted-foreground mt-0.5">Combined metrics across all monitors</p>
               </div>
-              <div className="flex items-center gap-5 text-xs">
+              <div className="flex items-center gap-4 text-[11px] sm:text-xs">
                 <span className="flex items-center gap-2 text-muted-foreground">
                   <span className="w-3 h-1 rounded-full bg-accent" />
                   Latency
@@ -207,8 +207,8 @@ export default function DashboardPage() {
               </div>
             </div>
           </div>
-          <div className="p-6">
-            <ResponsiveContainer width="100%" height={260}>
+          <div className="p-4 sm:p-6">
+            <ResponsiveContainer width="100%" height={220}>
               <AreaChart data={chartData}>
                 <defs>
                   <linearGradient id="colorLatency" x1="0" y1="0" x2="0" y2="1">
@@ -250,17 +250,17 @@ export default function DashboardPage() {
         </div>
 
         <div className="glass-card rounded-2xl overflow-hidden">
-          <div className="px-5 py-4 border-b border-white/5">
-            <h2 className="text-base font-semibold text-foreground">Live Activity</h2>
+          <div className="px-4 sm:px-5 py-3 sm:py-4 border-b border-white/5">
+            <h2 className="text-sm sm:text-base font-semibold text-foreground">Live Activity</h2>
           </div>
-          <div className="divide-y divide-white/5 max-h-85 overflow-y-auto">
+          <div className="divide-y divide-white/5 max-h-72 sm:max-h-85 overflow-y-auto">
             {recentEvents.length > 0 ? (
               recentEvents.map((event, index) => {
                 const badge = getStatusBadge(event.isUp)
                 return (
                   <div
                     key={event.id}
-                    className="px-5 py-3 hover:bg-white/2 transition-colors animate-fade-in"
+                    className="px-4 sm:px-5 py-3 hover:bg-white/2 transition-colors animate-fade-in"
                     style={{ animationDelay: `${index * 50}ms` }}
                   >
                     <div className="flex items-center justify-between">
@@ -293,9 +293,9 @@ export default function DashboardPage() {
       </div>
 
       <div className="glass-card rounded-2xl overflow-hidden">
-        <div className="px-6 py-5 border-b border-white/5 flex items-center justify-between">
+        <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
-            <h2 className="text-base font-semibold text-foreground">Active Incidents</h2>
+            <h2 className="text-sm sm:text-base font-semibold text-foreground">Active Incidents</h2>
             <p className="text-xs text-muted-foreground mt-0.5">Current issues affecting your monitors</p>
           </div>
           {down > 0 && (
@@ -313,10 +313,10 @@ export default function DashboardPage() {
                 <Link
                   key={w.id}
                   to={`/websites/${w.id}`}
-                  className="flex items-center justify-between px-6 py-4 hover:bg-white/2 transition-colors group"
+                  className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 hover:bg-white/2 transition-colors group"
                 >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+                    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-red-500/10 flex items-center justify-center group-hover:scale-110 transition-transform shrink-0">
                       <XCircle className="w-5 h-5 text-red-400" />
                     </div>
                     <div>
@@ -324,11 +324,11 @@ export default function DashboardPage() {
                       <p className="text-xs text-muted-foreground">{w.url}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <span className="badge-modern text-xs font-semibold px-2.5 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-400">
+                  <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+                    <span className="hidden sm:inline badge-modern text-xs font-semibold px-2.5 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-400">
                       Critical
                     </span>
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-[11px] sm:text-xs text-muted-foreground truncate max-w-[120px] sm:max-w-none">
                       {w.latest_check?.error_message || `${w.latest_check?.status_code}`}
                     </span>
                     <ArrowUpRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
@@ -350,19 +350,19 @@ export default function DashboardPage() {
       </div>
 
       <div className="glass-card rounded-2xl overflow-hidden">
-        <div className="px-6 py-5 border-b border-white/5 flex items-center justify-between">
+        <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h2 className="text-base font-semibold text-foreground">All Monitors</h2>
+            <h2 className="text-sm sm:text-base font-semibold text-foreground">All Monitors</h2>
             <p className="text-xs text-muted-foreground mt-0.5">Overview of all your monitored services</p>
           </div>
-          <Button size="sm" asChild className="bg-linear-to-r from-accent to-blue-600 hover:shadow-lg hover:shadow-accent/20">
+          <Button size="sm" asChild className="bg-linear-to-r from-accent to-blue-600 hover:shadow-lg hover:shadow-accent/20 self-start">
             <Link to="/websites/new">+ Add Monitor</Link>
           </Button>
         </div>
 
         {websites && websites.length > 0 ? (
-          <div>
-            <table className="w-full">
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[640px]">
               <thead>
                 <tr className="border-b border-white/5 text-[11px] text-muted-foreground uppercase tracking-wider">
                   <th className="text-left px-6 py-3 font-semibold">Name</th>
