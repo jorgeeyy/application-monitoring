@@ -3,11 +3,14 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AuthProvider } from './context/AuthContext'
 import { Toaster } from './components/ui/sonner'
 import Layout from './components/Layout'
+import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import DashboardPage from './pages/DashboardPage'
+import WebsitesPage from './pages/WebsitesPage'
 import WebsiteDetailPage from './pages/WebsiteDetailPage'
 import AddWebsitePage from './pages/AddWebsitePage'
+import SSLPage from './pages/SSLPage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -22,12 +25,15 @@ export default function App() {
         <AuthProvider>
           <Toaster />
           <Routes>
+            <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route element={<Layout />}>
-              <Route path="/" element={<DashboardPage />} />
+              <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/websites" element={<WebsitesPage />} />
               <Route path="/websites/new" element={<AddWebsitePage />} />
               <Route path="/websites/:id" element={<WebsiteDetailPage />} />
+              <Route path="/ssl" element={<SSLPage />} />
             </Route>
           </Routes>
         </AuthProvider>
