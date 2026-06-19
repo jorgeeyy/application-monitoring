@@ -2,15 +2,19 @@
 Django base settings for application-monitoring project.
 """
 
+import os
 from pathlib import Path
-from datetime import timedelta
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
+# Load environment variables from .env
+load_dotenv(BASE_DIR / '.env')
+
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-l-kumg%x^e5^)*_xb7u$bj^p2hr)pv-n0#5su+%#e)8=r30_%n'
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-change-me')
 
 # Application definition
 INSTALLED_APPS = [
@@ -135,16 +139,10 @@ SPECTACULAR_SETTINGS = {
 
 # CORS settings
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-]
+CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000,http://127.0.0.1:3000').split(',')
 
 # CSRF settings
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-]
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'http://localhost:3000,http://127.0.0.1:3000').split(',')
 
 # Session cookie settings
 SESSION_COOKIE_HTTPONLY = True
