@@ -16,7 +16,7 @@ import {
 function getStatusBadge(isUp: boolean | null | undefined) {
   if (isUp === true) return { bg: 'bg-green-500/10', border: 'border-green-500/20', text: 'text-green-400', label: 'Up', dot: 'bg-green-400' }
   if (isUp === false) return { bg: 'bg-red-500/10', border: 'border-red-500/20', text: 'text-red-400', label: 'Down', dot: 'bg-red-400' }
-  return { bg: 'bg-muted', border: 'border-border', text: 'text-muted-foreground', label: 'Unknown', dot: 'bg-muted-foreground/30' }
+  return { bg: 'bg-muted', border: 'border-border', text: 'text-muted-foreground', label: 'Not checked', dot: 'bg-muted-foreground/30' }
 }
 
 function getStatusDot(isUp: boolean | null | undefined) {

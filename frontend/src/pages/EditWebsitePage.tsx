@@ -235,7 +235,7 @@ export default function EditWebsitePage() {
               {[
                 { icon: Zap, label: 'Interval', value: `Every ${website.check_interval}s`, color: 'text-amber-400', bg: 'bg-amber-500/10' },
                 { icon: Shield, label: 'SSL', value: website.url.startsWith('https') ? 'Enabled' : 'HTTP Only', color: 'text-green-400', bg: 'bg-green-500/10' },
-                { icon: Globe, label: 'Status', value: website.latest_check?.is_up ? 'Online' : 'Unknown', color: 'text-cyan-400', bg: 'bg-cyan-500/10' },
+                { icon: Globe, label: 'Status', value: website.latest_check?.is_up ? 'Online' : 'Not checked', color: 'text-cyan-400', bg: 'bg-cyan-500/10' },
               ].map(({ icon: Icon, label, value, color, bg }) => (
                 <div key={label} className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5">

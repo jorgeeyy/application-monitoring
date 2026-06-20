@@ -72,7 +72,7 @@ function SSLCard({ websiteId, websiteName, domain }: { websiteId: string; websit
             ? 'bg-red-500/10 border-red-500/20 text-red-400'
             : 'bg-muted border-border text-muted-foreground'
         }`}>
-          {isValid ? 'Valid' : isHttp ? 'HTTP Only' : ssl ? 'Invalid' : 'Unknown'}
+          {isValid ? 'Valid' : isHttp ? 'HTTP Only' : ssl ? 'Invalid' : 'Not checked'}
         </span>
       </div>
 

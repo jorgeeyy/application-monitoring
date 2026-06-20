@@ -32,12 +32,19 @@ class WebsiteSerializer(serializers.ModelSerializer):
 
 
 class WebsiteDetailSerializer(serializers.ModelSerializer):
+    latest_check = serializers.SerializerMethodField()
     checks = serializers.SerializerMethodField()
 
     class Meta:
         model = MonitoredWebsite
-        fields = ['id', 'name', 'url', 'check_interval', 'is_active', 'created_at', 'updated_at', 'checks']
-        read_only_fields = ['id', 'created_at', 'updated_at', 'checks']
+        fields = ['id', 'name', 'url', 'check_interval', 'is_active', 'created_at', 'updated_at', 'latest_check', 'checks']
+        read_only_fields = ['id', 'created_at', 'updated_at', 'latest_check', 'checks']
+
+    def get_latest_check(self, obj):
+        latest = obj.checks.first()
+        if latest:
+            return UptimeCheckSerializer(latest).data
+        return None
 
     def get_checks(self, obj):
         return UptimeCheckSerializer(obj.checks.all()[:100], many=True).data
