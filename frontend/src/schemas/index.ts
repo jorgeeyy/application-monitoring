@@ -18,7 +18,10 @@ export const registerSchema = z.object({
 
 export const websiteSchema = z.object({
   name: z.string().min(1, 'Name is required'),
-  url: z.string().url('Must be a valid URL').startsWith('https://', 'URL must start with https://'),
+  url: z.string().url('Must be a valid URL').refine(
+    (val) => val.startsWith('http://') || val.startsWith('https://'),
+    'URL must start with http:// or https://',
+  ),
   check_interval: z.number().int().min(10, 'Minimum 10 seconds').max(3600, 'Maximum 3600 seconds'),
 })
 

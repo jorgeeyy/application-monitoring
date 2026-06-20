@@ -13,6 +13,7 @@ import {
   TrendingUp,
   Clock,
   Activity,
+  Pencil,
 } from 'lucide-react'
 import {
   AreaChart,
@@ -182,6 +183,13 @@ export default function WebsiteDetailPage() {
           </div>
         </div>
         <div className="flex items-center gap-2 shrink-0">
+          <Link
+            to={`/websites/${id}/edit`}
+            className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-white/[0.05] border border-white/5 transition-all"
+          >
+            <Pencil className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Edit</span>
+          </Link>
           <Button
             size="sm"
             onClick={() => checkMutation.mutate()}
@@ -257,12 +265,21 @@ export default function WebsiteDetailPage() {
           <div className="p-4 sm:p-6 flex flex-col items-center">
             {ssl ? (
               <>
-                <SSLCircle daysRemaining={ssl.days_remaining} isValid={ssl.is_valid} />
+                {ssl.error_message === 'Not an HTTPS URL' ? (
+                  <div className="w-[100px] h-[100px] rounded-full bg-amber-500/10 flex items-center justify-center">
+                    <Shield className="w-10 h-10 text-amber-400/60" />
+                  </div>
+                ) : (
+                  <SSLCircle daysRemaining={ssl.days_remaining} isValid={ssl.is_valid} />
+                )}
                 <div className="mt-5 space-y-2.5 w-full text-xs">
                   <div className="flex justify-between items-center py-1.5 border-b border-white/[0.03]">
                     <span className="text-muted-foreground">Status</span>
-                    <span className={`font-semibold ${ssl.is_valid ? 'text-green-400' : 'text-red-400'}`}>
-                      {ssl.is_valid ? 'Valid' : 'Invalid'}
+                    <span className={`font-semibold ${
+                      ssl.error_message === 'Not an HTTPS URL' ? 'text-amber-400' :
+                      ssl.is_valid ? 'text-green-400' : 'text-red-400'
+                    }`}>
+                      {ssl.error_message === 'Not an HTTPS URL' ? 'HTTP Only' : ssl.is_valid ? 'Valid' : 'Invalid'}
                     </span>
                   </div>
                   <div className="flex justify-between items-center py-1.5 border-b border-white/[0.03]">

@@ -9,6 +9,7 @@ import DashboardPage from './pages/DashboardPage'
 import WebsitesPage from './pages/WebsitesPage'
 import WebsiteDetailPage from './pages/WebsiteDetailPage'
 import AddWebsitePage from './pages/AddWebsitePage'
+import EditWebsitePage from './pages/EditWebsitePage'
 import SSLPage from './pages/SSLPage'
 
 const queryClient = new QueryClient({
@@ -31,6 +32,7 @@ export default function App() {
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/websites" element={<WebsitesPage />} />
               <Route path="/websites/new" element={<AddWebsitePage />} />
+              <Route path="/websites/:id/edit" element={<EditWebsitePage />} />
               <Route path="/websites/:id" element={<WebsiteDetailPage />} />
               <Route path="/ssl" element={<SSLPage />} />
             </Route>

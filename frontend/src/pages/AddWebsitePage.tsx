@@ -96,7 +96,7 @@ export default function AddWebsitePage() {
                     <LinkIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
                     <Input
                       type="url"
-                      placeholder="https://example.com"
+                      placeholder="https://example.com or http://subdomain.example.com"
                       {...register('url')}
                       className="pl-10 h-11 bg-white/[0.03] border-white/5 focus:border-accent/30 focus:bg-white/[0.05] rounded-xl"
                     />
@@ -109,8 +109,17 @@ export default function AddWebsitePage() {
 
               {watchedUrl && !errors.url && (
                 <div className="flex items-center gap-2 text-xs text-muted-foreground px-4 py-2.5 rounded-xl bg-white/[0.02] border border-white/[0.04]">
-                  <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                  {watchedUrl.startsWith('https://') ? (
+                    <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                  ) : (
+                    <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+                  )}
                   <span>Monitoring target: <span className="text-foreground font-medium">{watchedUrl}</span></span>
+                  <span className={`px-1.5 py-0.5 rounded text-[10px] font-semibold ${
+                    watchedUrl.startsWith('https://') ? 'bg-green-500/10 text-green-400' : 'bg-amber-500/10 text-amber-400'
+                  }`}>
+                    {watchedUrl.startsWith('https://') ? 'HTTPS' : 'HTTP'}
+                  </span>
                 </div>
               )}
 

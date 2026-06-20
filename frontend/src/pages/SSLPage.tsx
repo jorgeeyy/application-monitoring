@@ -42,6 +42,9 @@ function SSLCard({ websiteId, websiteName, domain }: { websiteId: string; websit
     refetchInterval: 60_000,
   })
 
+  const isHttpOnly = ssl?.error_message === 'Not an HTTPS URL'
+  const isValid = ssl?.is_valid && !isHttpOnly
+
   return (
     <Link
       to={`/websites/${websiteId}`}
@@ -50,9 +53,9 @@ function SSLCard({ websiteId, websiteName, domain }: { websiteId: string; websit
       <div className="flex items-start justify-between mb-5">
         <div className="flex items-center gap-3">
           <div className={`w-11 h-11 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 ${
-            ssl?.is_valid ? 'bg-green-500/10' : ssl ? 'bg-red-500/10' : 'bg-muted/50'
+            isValid ? 'bg-green-500/10' : isHttpOnly ? 'bg-amber-500/10' : ssl ? 'bg-red-500/10' : 'bg-muted/50'
           }`}>
-            <Shield className={`w-5 h-5 ${ssl?.is_valid ? 'text-green-400' : ssl ? 'text-red-400' : 'text-muted-foreground'}`} />
+            <Shield className={`w-5 h-5 ${isValid ? 'text-green-400' : isHttpOnly ? 'text-amber-400' : ssl ? 'text-red-400' : 'text-muted-foreground'}`} />
           </div>
           <div>
             <p className="text-sm font-semibold text-foreground group-hover:text-accent transition-colors">{websiteName}</p>
@@ -60,19 +63,27 @@ function SSLCard({ websiteId, websiteName, domain }: { websiteId: string; websit
           </div>
         </div>
         <span className={`badge-modern px-2.5 py-1 rounded-full border ${
-          ssl?.is_valid
+          isValid
             ? 'bg-green-500/10 border-green-500/20 text-green-400'
+            : isHttpOnly
+            ? 'bg-amber-500/10 border-amber-500/20 text-amber-400'
             : ssl
             ? 'bg-red-500/10 border-red-500/20 text-red-400'
             : 'bg-muted border-border text-muted-foreground'
         }`}>
-          {ssl?.is_valid ? 'Valid' : ssl ? 'Invalid' : 'Unknown'}
+          {isValid ? 'Valid' : isHttpOnly ? 'HTTP Only' : ssl ? 'Invalid' : 'Unknown'}
         </span>
       </div>
 
       {ssl ? (
         <div className="flex items-center gap-4">
-          <SSLCircle daysRemaining={ssl.days_remaining} isValid={ssl.is_valid} />
+          {isHttpOnly ? (
+            <div className="w-[68px] h-[68px] rounded-full bg-amber-500/10 flex items-center justify-center">
+              <Shield className="w-6 h-6 text-amber-400/60" />
+            </div>
+          ) : (
+            <SSLCircle daysRemaining={ssl.days_remaining} isValid={ssl.is_valid} />
+          )}
           <div className="flex-1 space-y-2.5 text-xs">
             <div className="flex justify-between items-center py-1.5 border-b border-white/[0.03]">
               <span className="text-muted-foreground">Issuer</span>
