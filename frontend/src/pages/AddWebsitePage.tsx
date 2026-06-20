@@ -12,7 +12,7 @@ import { ArrowLeft, Globe, LinkIcon, Clock, ArrowRight, Activity, Shield, Zap, I
 export default function AddWebsitePage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const { register, handleSubmit, watch, formState: { errors, isSubmitting } } = useForm<WebsiteFormData>({
+  const { register, handleSubmit, watch, setValue, formState: { errors, isSubmitting } } = useForm<WebsiteFormData>({
     resolver: zodResolver(websiteSchema),
     defaultValues: { check_interval: 60 },
   })
@@ -117,25 +117,26 @@ export default function AddWebsitePage() {
               <div className="space-y-3">
                 <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Check Interval</label>
                 <div className="grid grid-cols-5 gap-2 sm:gap-3">
-                  {intervalOptions.map(({ value, label, desc }) => (
-                    <label
-                      key={value}
-                      className={`relative flex flex-col items-center gap-1.5 p-3 sm:p-4 rounded-xl border cursor-pointer transition-all ${
-                        watchedInterval === value
-                          ? 'bg-accent/10 border-accent/30 text-accent shadow-lg shadow-accent/10'
-                          : 'bg-white/[0.02] border-white/5 text-muted-foreground hover:bg-white/[0.04] hover:border-white/10'
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        value={value}
-                        {...register('check_interval', { valueAsNumber: true })}
-                        className="sr-only"
-                      />
-                      <span className="text-base sm:text-lg font-bold">{label}</span>
-                      <span className="text-[10px] sm:text-[11px] opacity-60">{desc}</span>
-                    </label>
-                  ))}
+                  {intervalOptions.map(({ value, label, desc }) => {
+                    const isSelected = Number(watchedInterval) === value
+                    return (
+                      <label
+                        key={value}
+                        onClick={() => setValue('check_interval', value, { shouldValidate: true })}
+                        className={`relative flex flex-col items-center gap-1.5 p-3 sm:p-4 rounded-xl border cursor-pointer transition-all duration-200 ${
+                          isSelected
+                            ? 'bg-gradient-to-b from-accent/15 to-accent/5 border-accent/40 text-accent shadow-lg shadow-accent/15 scale-[1.02]'
+                            : 'bg-white/[0.02] border-white/5 text-muted-foreground hover:bg-white/[0.05] hover:border-white/10 hover:scale-[1.01]'
+                        }`}
+                      >
+                        {isSelected && (
+                          <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-accent shadow-[0_0_6px_rgba(59,130,246,0.6)]" />
+                        )}
+                        <span className={`text-base sm:text-lg font-bold ${isSelected ? 'text-accent' : ''}`}>{label}</span>
+                        <span className={`text-[10px] sm:text-[11px] ${isSelected ? 'text-accent/60' : 'opacity-50'}`}>{desc}</span>
+                      </label>
+                    )
+                  })}
                 </div>
                 {errors.check_interval && (
                   <p className="text-xs text-red-400">{errors.check_interval.message}</p>

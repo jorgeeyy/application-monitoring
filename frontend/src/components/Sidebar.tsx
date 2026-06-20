@@ -92,10 +92,13 @@ export default function Sidebar() {
       </div>
 
       <div className="p-3 pt-4">
-        <button className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-[13px] font-semibold bg-linear-to-r from-accent to-blue-600 text-white hover:shadow-lg hover:shadow-accent/25 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 cursor-pointer">
+        <Link
+          to="/websites/new"
+          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-[13px] font-semibold bg-linear-to-r from-accent to-blue-600 text-white hover:shadow-lg hover:shadow-accent/25 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+        >
           <span className="text-base leading-none font-light">+</span>
           New Monitor
-        </button>
+        </Link>
       </div>
 
       <nav className="flex-1 px-3 space-y-0.5 overflow-y-auto py-2">
