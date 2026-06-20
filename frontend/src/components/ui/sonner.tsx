@@ -8,10 +8,10 @@ export function Toaster() {
       className={cn()}
       toastOptions={{
         classNames: {
-          toast: 'group toast group-[.toaster]:bg-[#111] group-[.toaster]:text-foreground group-[.toaster]:border-[#222] group-[.toaster]:shadow-2xl',
-          description: 'group-[.toast]:text-[#666]',
-          actionButton: 'group-[.toast]:bg-white group-[.toast]:text-black',
-          cancelButton: 'group-[.toast]:bg-[#222] group-[.toast]:text-[#999]',
+          toast: 'group toast group-[.toaster]:bg-card group-[.toaster]:text-card-foreground group-[.toaster]:border-border group-[.toaster]:shadow-2xl',
+          description: 'group-[.toast]:text-muted-foreground',
+          actionButton: 'group-[.toast]:bg-primary group-[.toast]:text-primary-foreground',
+          cancelButton: 'group-[.toast]:bg-accent group-[.toast]:text-muted-foreground',
         },
       }}
     />

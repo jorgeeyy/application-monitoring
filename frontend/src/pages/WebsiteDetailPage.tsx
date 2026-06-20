@@ -29,7 +29,7 @@ function getStatusLabel(isUp: boolean | null | undefined) {
 function getStatusColor(isUp: boolean | null | undefined) {
   if (isUp === true) return 'text-[#22c55e]'
   if (isUp === false) return 'text-[#ef4444]'
-  return 'text-[#555]'
+  return 'text-muted-foreground'
 }
 
 function SSLCircle({ daysRemaining, isValid }: { daysRemaining: number | null; isValid: boolean }) {
@@ -42,7 +42,7 @@ function SSLCircle({ daysRemaining, isValid }: { daysRemaining: number | null; i
   return (
     <div className="relative w-[100px] h-[100px]">
       <svg className="w-full h-full -rotate-90" viewBox="0 0 90 90">
-        <circle cx="45" cy="45" r="40" fill="none" stroke="#1a1a1a" strokeWidth="6" />
+        <circle cx="45" cy="45" r="40" fill="none" stroke="var(--color-border)" strokeWidth="6" />
         <circle
           cx="45"
           cy="45"
@@ -58,7 +58,7 @@ function SSLCircle({ daysRemaining, isValid }: { daysRemaining: number | null; i
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <span className={`text-2xl font-bold ${isValid ? 'text-[#22c55e]' : 'text-[#ef4444]'}`}>{days}</span>
-        <span className="text-[9px] text-[#555] font-medium uppercase tracking-wider">Days Left</span>
+        <span className="text-[9px] text-muted-foreground font-medium uppercase tracking-wider">Days Left</span>
       </div>
     </div>
   )
@@ -133,8 +133,8 @@ export default function WebsiteDetailPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="flex items-center gap-3 text-[#555]">
-          <div className="w-4 h-4 border-2 border-[#333] border-t-white rounded-full animate-spin" />
+        <div className="flex items-center gap-3 text-muted-foreground">
+          <div className="w-4 h-4 border-2 border-border border-t-primary rounded-full animate-spin" />
           <span className="text-sm">Loading...</span>
         </div>
       </div>
@@ -158,12 +158,12 @@ export default function WebsiteDetailPage() {
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <Link to="/websites" className="text-[12px] text-[#555] hover:text-foreground transition-colors">
+          <Link to="/websites" className="text-[12px] text-muted-foreground hover:text-foreground transition-colors">
             ← Monitors
           </Link>
           <div className="flex items-center gap-3 mt-2">
             <h1 className="text-lg font-semibold truncate">{website.url}</h1>
-            <a href={website.url} target="_blank" rel="noopener noreferrer" className="text-[#555] hover:text-foreground transition-colors shrink-0">
+            <a href={website.url} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors shrink-0">
               ↗
             </a>
           </div>
@@ -172,7 +172,7 @@ export default function WebsiteDetailPage() {
               {getStatusLabel(lastCheck?.is_up)}
             </span>
             {lastCheck && (
-              <span className="text-[12px] text-[#555]">
+              <span className="text-[12px] text-muted-foreground">
                 {lastCheck.response_time_ms != null && `${lastCheck.response_time_ms}ms`}
                 {lastCheck.response_time_ms != null && lastCheck.status_code && ' · '}
                 {lastCheck.status_code && `${lastCheck.status_code}`}
@@ -183,7 +183,7 @@ export default function WebsiteDetailPage() {
         <div className="flex items-center gap-2 shrink-0">
           <Link
             to={`/websites/${id}/edit`}
-            className="inline-flex items-center gap-1.5 h-8 px-3 rounded-md text-[13px] text-[#555] hover:text-foreground hover:bg-[#111] border border-[#333] transition-colors"
+            className="inline-flex items-center gap-1.5 h-8 px-3 rounded-md text-[13px] text-muted-foreground hover:text-foreground hover:bg-accent border border-border transition-colors"
           >
             Edit
           </Link>
@@ -200,10 +200,10 @@ export default function WebsiteDetailPage() {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Response Time */}
-        <div className="rounded-lg border border-[#1a1a1a] bg-[#0a0a0a] overflow-hidden">
-          <div className="px-5 py-3 border-b border-[#1a1a1a] flex items-center justify-between">
+        <div className="rounded-lg border border-border bg-card overflow-hidden">
+          <div className="px-5 py-3 border-b border-border flex items-center justify-between">
             <span className="text-[13px] font-medium">Response Time</span>
-            <span className="text-[11px] text-[#555]">
+            <span className="text-[11px] text-muted-foreground">
               Avg: {stats?.average_response_time_ms ?? '-'}ms
             </span>
           </div>
@@ -217,23 +217,24 @@ export default function WebsiteDetailPage() {
                       <stop offset="95%" stopColor="#ededed" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <XAxis dataKey="time" tick={{ fill: '#555', fontSize: 10 }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fill: '#555', fontSize: 10 }} axisLine={false} tickLine={false} width={40} />
+                  <XAxis dataKey="time" tick={{ fill: '#888', fontSize: 10 }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fill: '#888', fontSize: 10 }} axisLine={false} tickLine={false} width={40} />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: '#111',
-                      border: '1px solid #222',
+                      backgroundColor: 'var(--color-card)',
+                      border: '1px solid var(--color-border)',
                       borderRadius: '6px',
                       fontSize: '12px',
+                      color: 'var(--color-foreground)',
                     }}
-                    labelStyle={{ color: '#666' }}
+                    labelStyle={{ color: 'var(--color-muted-foreground)' }}
                     formatter={(value) => [`${value}ms`, 'Response']}
                   />
                   <Area type="monotone" dataKey="response" stroke="#ededed" strokeWidth={1.5} fillOpacity={1} fill="url(#colorResponse)" dot={false} activeDot={{ r: 4, fill: '#ededed', stroke: '#0a0a0a', strokeWidth: 2 }} />
                 </AreaChart>
               </ResponsiveContainer>
             ) : (
-              <div className="flex items-center justify-center h-[140px] text-[13px] text-[#555]">
+              <div className="flex items-center justify-center h-[140px] text-[13px] text-muted-foreground">
                 No data yet
               </div>
             )}
@@ -241,14 +242,14 @@ export default function WebsiteDetailPage() {
         </div>
 
         {/* SSL */}
-        <div className="rounded-lg border border-[#1a1a1a] bg-[#0a0a0a] overflow-hidden">
-          <div className="px-5 py-3 border-b border-[#1a1a1a] flex items-center justify-between">
+        <div className="rounded-lg border border-border bg-card overflow-hidden">
+          <div className="px-5 py-3 border-b border-border flex items-center justify-between">
             <span className="text-[13px] font-medium">SSL Certificate</span>
             {website.url.startsWith('https://') && (
               <button
                 onClick={() => sslCheckMutation.mutate()}
                 disabled={sslCheckMutation.isPending}
-                className="text-[11px] text-[#555] hover:text-foreground transition-colors cursor-pointer disabled:opacity-50"
+                className="text-[11px] text-muted-foreground hover:text-foreground transition-colors cursor-pointer disabled:opacity-50"
               >
                 {sslCheckMutation.isPending ? 'Checking...' : 'Re-check'}
               </button>
@@ -257,25 +258,25 @@ export default function WebsiteDetailPage() {
           <div className="p-5 flex flex-col items-center">
             {website.url.startsWith('http://') ? (
               <div className="py-4 text-center">
-                <p className="text-[13px] text-[#555]">HTTP only</p>
-                <p className="text-[11px] text-[#444] mt-1">No SSL to monitor</p>
+                <p className="text-[13px] text-muted-foreground">HTTP only</p>
+                <p className="text-[11px] text-muted-foreground mt-1">No SSL to monitor</p>
               </div>
             ) : ssl ? (
               <>
                 <SSLCircle daysRemaining={ssl.days_remaining} isValid={ssl.is_valid} />
                 <div className="mt-4 space-y-2 w-full text-[12px]">
                   <div className="flex justify-between">
-                    <span className="text-[#555]">Status</span>
+                    <span className="text-muted-foreground">Status</span>
                     <span className={ssl.is_valid ? 'text-[#22c55e]' : 'text-[#ef4444]'}>
                       {ssl.is_valid ? 'Valid' : 'Invalid'}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[#555]">Issuer</span>
+                    <span className="text-muted-foreground">Issuer</span>
                     <span className="text-foreground">{ssl.issuer || '-'}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[#555]">Expires</span>
+                    <span className="text-muted-foreground">Expires</span>
                     <span className={ssl.days_remaining !== null && ssl.days_remaining < 30 ? 'text-[#f59e0b]' : 'text-foreground'}>
                       {ssl.days_remaining !== null ? `${ssl.days_remaining} days` : '-'}
                     </span>
@@ -283,14 +284,14 @@ export default function WebsiteDetailPage() {
                 </div>
               </>
             ) : (
-              <div className="py-4 text-[13px] text-[#555]">No SSL data</div>
+              <div className="py-4 text-[13px] text-muted-foreground">No SSL data</div>
             )}
           </div>
         </div>
 
         {/* Uptime */}
-        <div className="rounded-lg border border-[#1a1a1a] bg-[#0a0a0a] overflow-hidden">
-          <div className="px-5 py-3 border-b border-[#1a1a1a]">
+        <div className="rounded-lg border border-border bg-card overflow-hidden">
+          <div className="px-5 py-3 border-b border-border">
             <span className="text-[13px] font-medium">Uptime</span>
           </div>
           <div className="p-5">
@@ -298,9 +299,9 @@ export default function WebsiteDetailPage() {
               <div className="space-y-4">
                 <div className="text-center">
                   <p className="text-3xl font-bold">{stats.uptime_percentage_24h}%</p>
-                  <p className="text-[11px] text-[#555] mt-1">24h availability</p>
+                  <p className="text-[11px] text-muted-foreground mt-1">24h availability</p>
                 </div>
-                <div className="w-full bg-[#1a1a1a] rounded-full h-1.5 overflow-hidden">
+                <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
                   <div
                     className={`h-1.5 rounded-full transition-all duration-700 ${
                       stats.uptime_percentage_24h >= 99 ? 'bg-[#22c55e]' :
@@ -311,22 +312,22 @@ export default function WebsiteDetailPage() {
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-2">
-                  <div className="rounded-md border border-[#1a1a1a] bg-black p-3 text-center">
-                    <p className="text-[10px] text-[#555] uppercase tracking-wider">7d</p>
+                  <div className="rounded-md border border-border bg-background p-3 text-center">
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">7d</p>
                     <p className="text-lg font-semibold mt-0.5">{stats.uptime_percentage_7d}%</p>
                   </div>
-                  <div className="rounded-md border border-[#1a1a1a] bg-black p-3 text-center">
-                    <p className="text-[10px] text-[#555] uppercase tracking-wider">30d</p>
+                  <div className="rounded-md border border-border bg-background p-3 text-center">
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider">30d</p>
                     <p className="text-lg font-semibold mt-0.5">{stats.uptime_percentage_30d}%</p>
                   </div>
                 </div>
-                <div className="rounded-md border border-[#1a1a1a] bg-black p-3 text-center">
-                  <p className="text-[10px] text-[#555] uppercase tracking-wider">Total checks</p>
+                <div className="rounded-md border border-border bg-background p-3 text-center">
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Total checks</p>
                   <p className="text-lg font-semibold mt-0.5">{stats.total_checks.toLocaleString()}</p>
                 </div>
               </div>
             ) : (
-              <div className="flex items-center justify-center h-[200px] text-[13px] text-[#555]">
+              <div className="flex items-center justify-center h-[200px] text-[13px] text-muted-foreground">
                 No data yet
               </div>
             )}
@@ -335,28 +336,28 @@ export default function WebsiteDetailPage() {
       </div>
 
       {/* Event Log */}
-      <div className="rounded-lg border border-[#1a1a1a] bg-[#0a0a0a] overflow-hidden">
-        <div className="px-5 py-3 border-b border-[#1a1a1a] flex items-center justify-between">
+      <div className="rounded-lg border border-border bg-card overflow-hidden">
+        <div className="px-5 py-3 border-b border-border flex items-center justify-between">
           <span className="text-[13px] font-medium">Event Log</span>
           {checks && checks.length > 0 && (
-            <span className="text-[11px] text-[#555]">Last {Math.min(checks.length, 20)}</span>
+            <span className="text-[11px] text-muted-foreground">Last {Math.min(checks.length, 20)}</span>
           )}
         </div>
         {checks && checks.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-[#1a1a1a] text-[11px] text-[#555] uppercase tracking-wider">
+                <tr className="border-b border-border text-[11px] text-muted-foreground uppercase tracking-wider">
                   <th className="text-left px-5 py-2.5 font-medium">Time</th>
                   <th className="text-left px-5 py-2.5 font-medium">Status</th>
                   <th className="text-left px-5 py-2.5 font-medium">Response</th>
                   <th className="text-left px-5 py-2.5 font-medium">Message</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#1a1a1a]">
+              <tbody className="divide-y divide-border">
                 {checks.slice(0, 20).map((c) => (
-                  <tr key={c.id} className="hover:bg-[#111] transition-colors">
-                    <td className="px-5 py-2.5 text-[12px] text-[#555]">
+                  <tr key={c.id} className="hover:bg-accent transition-colors">
+                    <td className="px-5 py-2.5 text-[12px] text-muted-foreground">
                       {new Date(c.checked_at).toLocaleString()}
                     </td>
                     <td className="px-5 py-2.5">
@@ -364,10 +365,10 @@ export default function WebsiteDetailPage() {
                         {c.is_up ? 'Up' : 'Down'}
                       </span>
                     </td>
-                    <td className="px-5 py-2.5 text-[12px] text-[#999]">
+                    <td className="px-5 py-2.5 text-[12px] text-muted-foreground">
                       {c.response_time_ms ? `${c.response_time_ms}ms` : '-'}
                     </td>
-                    <td className="px-5 py-2.5 text-[12px] text-[#555]">
+                    <td className="px-5 py-2.5 text-[12px] text-muted-foreground">
                       {c.is_up
                         ? `HTTP ${c.status_code}`
                         : c.error_message || `HTTP ${c.status_code}`}
@@ -378,7 +379,7 @@ export default function WebsiteDetailPage() {
             </table>
           </div>
         ) : (
-          <div className="p-8 text-center text-[13px] text-[#555]">
+          <div className="p-8 text-center text-[13px] text-muted-foreground">
             No events yet. Click "Check now" to run your first check.
           </div>
         )}

@@ -2,18 +2,24 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Link, Navigate, useLocation } from 'react-router-dom'
+import { useTheme } from 'next-themes'
 import { toast } from 'sonner'
 import { useAuth } from '../context/AuthContext'
 import { loginSchema, registerSchema, type LoginFormData, type RegisterFormData } from '../schemas'
 import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
-import { Eye, EyeOff } from 'lucide-react'
+import { Eye, EyeOff, Sun, Moon } from 'lucide-react'
+import { useEffect } from 'react'
 
 export default function AuthPage() {
   const { user, login, register } = useAuth()
   const location = useLocation()
+  const { theme, setTheme } = useTheme()
   const [mode, setMode] = useState<'login' | 'register'>(location.pathname === '/register' ? 'register' : 'login')
   const [showPassword, setShowPassword] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => setMounted(true), [])
 
   const loginForm = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -49,13 +55,13 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Top nav */}
-      <header className="border-b border-[#1a1a1a]">
+      <header className="border-b border-border">
         <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded bg-white flex items-center justify-center">
-              <span className="text-[11px] font-bold text-black">A</span>
+            <div className="w-6 h-6 rounded bg-primary flex items-center justify-center">
+              <span className="text-[11px] font-bold text-primary-foreground">A</span>
             </div>
             <span className="text-sm font-semibold text-foreground">AppMonitor</span>
           </Link>
@@ -63,7 +69,7 @@ export default function AuthPage() {
             <Link
               to="/login"
               className={`text-[13px] transition-colors ${
-                mode === 'login' ? 'text-foreground' : 'text-[#666] hover:text-foreground'
+                mode === 'login' ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
               }`}
             >
               Sign in
@@ -72,12 +78,20 @@ export default function AuthPage() {
               to="/register"
               className={`text-[13px] px-3 py-1.5 rounded-md transition-colors ${
                 mode === 'register'
-                  ? 'bg-white text-black'
-                  : 'border border-[#333] text-foreground hover:bg-[#111]'
+                  ? 'bg-primary text-primary-foreground'
+                  : 'border border-border text-foreground hover:bg-accent'
               }`}
             >
               Get Started
             </Link>
+            {mounted && (
+              <button
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer"
+              >
+                {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              </button>
+            )}
           </div>
         </div>
       </header>
@@ -86,13 +100,13 @@ export default function AuthPage() {
       <div className="flex-1 flex items-center justify-center p-6">
         <div className="w-full max-w-[380px]">
           {/* Tab switcher */}
-          <div className="flex items-center gap-0 border-b border-[#1a1a1a] mb-8">
+          <div className="flex items-center gap-0 border-b border-border mb-8">
             <button
               onClick={() => switchMode('login')}
               className={`flex-1 py-3 text-sm font-medium transition-colors cursor-pointer border-b-2 -mb-[1px] ${
                 mode === 'login'
                   ? 'border-foreground text-foreground'
-                  : 'border-transparent text-[#666] hover:text-foreground'
+                  : 'border-transparent text-muted-foreground hover:text-foreground'
               }`}
             >
               Sign in
@@ -102,7 +116,7 @@ export default function AuthPage() {
               className={`flex-1 py-3 text-sm font-medium transition-colors cursor-pointer border-b-2 -mb-[1px] ${
                 mode === 'register'
                   ? 'border-foreground text-foreground'
-                  : 'border-transparent text-[#666] hover:text-foreground'
+                  : 'border-transparent text-muted-foreground hover:text-foreground'
               }`}
             >
               Create account
@@ -114,12 +128,12 @@ export default function AuthPage() {
             <div className="animate-fade-in">
               <div className="space-y-1 mb-6">
                 <h1 className="text-xl font-semibold text-foreground">Welcome back</h1>
-                <p className="text-sm text-[#666]">Sign in to your account</p>
+                <p className="text-sm text-muted-foreground">Sign in to your account</p>
               </div>
 
               <form onSubmit={loginForm.handleSubmit(onLogin)} className="space-y-4">
                 <div className="space-y-1.5">
-                  <label className="text-[13px] text-[#999]">Email</label>
+                  <label className="text-[13px] text-muted-foreground">Email</label>
                   <Input
                     type="email"
                     {...loginForm.register('email')}
@@ -131,7 +145,7 @@ export default function AuthPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[13px] text-[#999]">Password</label>
+                  <label className="text-[13px] text-muted-foreground">Password</label>
                   <div className="relative">
                     <Input
                       type={showPassword ? 'text' : 'password'}
@@ -142,7 +156,7 @@ export default function AuthPage() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#555] hover:text-[#999] transition-colors cursor-pointer"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -161,7 +175,7 @@ export default function AuthPage() {
                 </Button>
               </form>
 
-              <p className="text-[13px] text-center text-[#555] mt-6">
+              <p className="text-[13px] text-center text-muted-foreground mt-6">
                 Don't have an account?{' '}
                 <button
                   onClick={() => switchMode('register')}
@@ -178,12 +192,12 @@ export default function AuthPage() {
             <div className="animate-fade-in">
               <div className="space-y-1 mb-6">
                 <h1 className="text-xl font-semibold text-foreground">Create account</h1>
-                <p className="text-sm text-[#666]">Start monitoring your websites</p>
+                <p className="text-sm text-muted-foreground">Start monitoring your websites</p>
               </div>
 
               <form onSubmit={registerForm.handleSubmit(onRegister)} className="space-y-4">
                 <div className="space-y-1.5">
-                  <label className="text-[13px] text-[#999]">Email</label>
+                  <label className="text-[13px] text-muted-foreground">Email</label>
                   <Input
                     type="email"
                     {...registerForm.register('email')}
@@ -196,7 +210,7 @@ export default function AuthPage() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <label className="text-[13px] text-[#999]">First name</label>
+                    <label className="text-[13px] text-muted-foreground">First name</label>
                     <Input
                       {...registerForm.register('first_name')}
                       placeholder="John"
@@ -206,7 +220,7 @@ export default function AuthPage() {
                     )}
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[13px] text-[#999]">Last name</label>
+                    <label className="text-[13px] text-muted-foreground">Last name</label>
                     <Input
                       {...registerForm.register('last_name')}
                       placeholder="Doe"
@@ -218,7 +232,7 @@ export default function AuthPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[13px] text-[#999]">Password</label>
+                  <label className="text-[13px] text-muted-foreground">Password</label>
                   <div className="relative">
                     <Input
                       type={showPassword ? 'text' : 'password'}
@@ -229,7 +243,7 @@ export default function AuthPage() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#555] hover:text-[#999] transition-colors cursor-pointer"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -240,7 +254,7 @@ export default function AuthPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[13px] text-[#999]">Confirm password</label>
+                  <label className="text-[13px] text-muted-foreground">Confirm password</label>
                   <Input
                     type="password"
                     {...registerForm.register('password_confirm')}
@@ -260,7 +274,7 @@ export default function AuthPage() {
                 </Button>
               </form>
 
-              <p className="text-[13px] text-center text-[#555] mt-6">
+              <p className="text-[13px] text-center text-muted-foreground mt-6">
                 Already have an account?{' '}
                 <button
                   onClick={() => switchMode('login')}

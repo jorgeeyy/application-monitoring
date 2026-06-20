@@ -1,23 +1,63 @@
 @import "tailwindcss";
 
-@layer base {
-  :root {
-    --background: #000000;
-    --foreground: #ededed;
-    --card: #0a0a0a;
-    --card-foreground: #ededed;
-    --border: #1a1a1a;
-    --muted: #111111;
-    --muted-foreground: #666666;
-    --accent: #ededed;
-    --accent-foreground: #000000;
-    --destructive: #ef4444;
-    --destructive-foreground: #ffffff;
-    --ring: #333333;
-    --success: #22c55e;
-    --warning: #f59e0b;
-    --info: #3b82f6;
-  }
+@theme {
+  --color-background: var(--color-background);
+  --color-foreground: var(--color-foreground);
+  --color-card: var(--color-card);
+  --color-card-foreground: var(--color-card-foreground);
+  --color-border: var(--color-border);
+  --color-muted: var(--color-muted);
+  --color-muted-foreground: var(--color-muted-foreground);
+  --color-primary: var(--color-primary);
+  --color-primary-foreground: var(--color-primary-foreground);
+  --color-destructive: var(--color-destructive);
+  --color-destructive-foreground: var(--color-destructive-foreground);
+  --color-ring: var(--color-ring);
+  --color-success: var(--color-success);
+  --color-warning: var(--color-warning);
+  --color-info: var(--color-info);
+  --color-accent: var(--color-accent);
+  --color-accent-foreground: var(--color-accent-foreground);
+}
+
+:root {
+  --color-background: #ffffff;
+  --color-foreground: #000000;
+  --color-card: #fafafa;
+  --color-card-foreground: #000000;
+  --color-border: #eaeaea;
+  --color-muted: #f5f5f5;
+  --color-muted-foreground: #666666;
+  --color-primary: #000000;
+  --color-primary-foreground: #ffffff;
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #ffffff;
+  --color-ring: #d4d4d4;
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-info: #3b82f6;
+  --color-accent: #f5f5f5;
+  --color-accent-foreground: #000000;
+}
+
+.dark {
+  --color-background: #000000;
+  --color-foreground: #ededed;
+  --color-card: #0a0a0a;
+  --color-card-foreground: #ededed;
+  --color-border: #1a1a1a;
+  --color-muted: #111111;
+  --color-muted-foreground: #666666;
+  --color-primary: #ededed;
+  --color-primary-foreground: #000000;
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #ffffff;
+  --color-ring: #333333;
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-info: #3b82f6;
+  --color-accent: #111111;
+  --color-accent-foreground: #ededed;
 }
 
 * {
@@ -26,8 +66,8 @@
 }
 
 body {
-  background-color: var(--background);
-  color: var(--foreground);
+  background-color: var(--color-background);
+  color: var(--color-foreground);
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

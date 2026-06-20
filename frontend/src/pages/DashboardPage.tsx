@@ -14,7 +14,7 @@ import {
 function getStatusDot(isUp: boolean | null | undefined) {
   if (isUp === true) return 'bg-[#22c55e]'
   if (isUp === false) return 'bg-[#ef4444]'
-  return 'bg-[#333]'
+  return 'bg-muted'
 }
 
 function getStatusLabel(isUp: boolean | null | undefined) {
@@ -26,7 +26,7 @@ function getStatusLabel(isUp: boolean | null | undefined) {
 function getStatusColor(isUp: boolean | null | undefined) {
   if (isUp === true) return 'text-[#22c55e]'
   if (isUp === false) return 'text-[#ef4444]'
-  return 'text-[#555]'
+  return 'text-muted-foreground'
 }
 
 export default function DashboardPage() {
@@ -39,8 +39,8 @@ export default function DashboardPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="flex items-center gap-3 text-[#555]">
-          <div className="w-4 h-4 border-2 border-[#333] border-t-white rounded-full animate-spin" />
+        <div className="flex items-center gap-3 text-muted-foreground">
+          <div className="w-4 h-4 border-2 border-border border-t-primary rounded-full animate-spin" />
           <span className="text-sm">Loading...</span>
         </div>
       </div>
@@ -93,7 +93,7 @@ export default function DashboardPage() {
       <div className="flex items-end justify-between">
         <div>
           <h1 className="text-xl font-semibold">Overview</h1>
-          <p className="text-[13px] text-[#555] mt-0.5">System status and metrics</p>
+          <p className="text-[13px] text-muted-foreground mt-0.5">System status and metrics</p>
         </div>
         <Button size="sm" asChild>
           <Link to="/websites/new">+ Add Monitor</Link>
@@ -101,15 +101,15 @@ export default function DashboardPage() {
       </div>
 
       {/* Stat Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-[#1a1a1a] border border-[#1a1a1a] rounded-lg overflow-hidden">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           { label: 'Monitors', value: total },
           { label: 'Online', value: up, color: 'text-[#22c55e]' },
           { label: 'Offline', value: down, color: down > 0 ? 'text-[#ef4444]' : undefined },
           { label: 'Avg Response', value: `${avgResponse}ms` },
         ].map(({ label, value, color }) => (
-          <div key={label} className="bg-[#0a0a0a] p-5">
-            <p className="text-[11px] text-[#555] uppercase tracking-wider">{label}</p>
+          <div key={label} className="bg-card border border-border p-5 rounded-lg">
+            <p className="text-[11px] text-muted-foreground uppercase tracking-wider">{label}</p>
             <p className={`text-2xl font-bold mt-2 ${color || 'text-foreground'}`}>{value}</p>
           </div>
         ))}
@@ -118,10 +118,10 @@ export default function DashboardPage() {
       {/* Chart + Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Chart */}
-        <div className="lg:col-span-2 rounded-lg border border-[#1a1a1a] bg-[#0a0a0a] overflow-hidden">
-          <div className="px-5 py-4 border-b border-[#1a1a1a]">
+        <div className="lg:col-span-2 rounded-lg border border-border bg-card overflow-hidden">
+          <div className="px-5 py-4 border-b border-border">
             <h2 className="text-sm font-medium">Response Time</h2>
-            <p className="text-[11px] text-[#555] mt-0.5">Last 24 hours</p>
+            <p className="text-[11px] text-muted-foreground mt-0.5">Last 24 hours</p>
           </div>
           <div className="p-5">
             <ResponsiveContainer width="100%" height={200}>
@@ -132,16 +132,17 @@ export default function DashboardPage() {
                     <stop offset="95%" stopColor="#ededed" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <XAxis dataKey="time" tick={{ fill: '#555', fontSize: 11 }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill: '#555', fontSize: 11 }} axisLine={false} tickLine={false} />
+                <XAxis dataKey="time" tick={{ fill: '#888', fontSize: 11 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: '#888', fontSize: 11 }} axisLine={false} tickLine={false} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#111',
-                    border: '1px solid #222',
+                    backgroundColor: 'var(--color-card)',
+                    border: '1px solid var(--color-border)',
                     borderRadius: '6px',
                     fontSize: '12px',
+                    color: 'var(--color-foreground)',
                   }}
-                  labelStyle={{ color: '#666' }}
+                  labelStyle={{ color: 'var(--color-muted-foreground)' }}
                   itemStyle={{ padding: 0 }}
                 />
                 <Area
@@ -160,14 +161,14 @@ export default function DashboardPage() {
         </div>
 
         {/* Activity */}
-        <div className="rounded-lg border border-[#1a1a1a] bg-[#0a0a0a] overflow-hidden">
-          <div className="px-5 py-4 border-b border-[#1a1a1a]">
+        <div className="rounded-lg border border-border bg-card overflow-hidden">
+          <div className="px-5 py-4 border-b border-border">
             <h2 className="text-sm font-medium">Activity</h2>
           </div>
-          <div className="divide-y divide-[#1a1a1a] max-h-72 overflow-y-auto">
+          <div className="divide-y divide-border max-h-72 overflow-y-auto">
             {recentEvents.length > 0 ? (
               recentEvents.map((event) => (
-                <div key={event.id} className="px-5 py-3 hover:bg-[#111] transition-colors">
+                <div key={event.id} className="px-5 py-3 hover:bg-accent transition-colors">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 min-w-0">
                       <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${getStatusDot(event.isUp)}`} />
@@ -177,7 +178,7 @@ export default function DashboardPage() {
                       {getStatusLabel(event.isUp)}
                     </span>
                   </div>
-                  <div className="flex items-center gap-3 mt-1 ml-3.5 text-[11px] text-[#555]">
+                  <div className="flex items-center gap-3 mt-1 ml-3.5 text-[11px] text-muted-foreground">
                     {event.responseTime != null && <span>{event.responseTime}ms</span>}
                     {event.statusCode && <span>{event.statusCode}</span>}
                     <span>{new Date(event.checkedAt).toLocaleTimeString()}</span>
@@ -185,7 +186,7 @@ export default function DashboardPage() {
                 </div>
               ))
             ) : (
-              <div className="p-8 text-center text-[13px] text-[#555]">
+              <div className="p-8 text-center text-[13px] text-muted-foreground">
                 No recent activity
               </div>
             )}
@@ -194,8 +195,8 @@ export default function DashboardPage() {
       </div>
 
       {/* All Monitors Table */}
-      <div className="rounded-lg border border-[#1a1a1a] bg-[#0a0a0a] overflow-hidden">
-        <div className="px-5 py-4 border-b border-[#1a1a1a]">
+      <div className="rounded-lg border border-border bg-card overflow-hidden">
+        <div className="px-5 py-4 border-b border-border">
           <h2 className="text-sm font-medium">Monitors</h2>
         </div>
 
@@ -203,7 +204,7 @@ export default function DashboardPage() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-[#1a1a1a] text-[11px] text-[#555] uppercase tracking-wider">
+                <tr className="border-b border-border text-[11px] text-muted-foreground uppercase tracking-wider">
                   <th className="text-left px-5 py-2.5 font-medium">Name</th>
                   <th className="text-left px-5 py-2.5 font-medium">Status</th>
                   <th className="text-left px-5 py-2.5 font-medium">Response</th>
@@ -211,11 +212,11 @@ export default function DashboardPage() {
                   <th className="text-right px-5 py-2.5 font-medium"></th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#1a1a1a]">
+              <tbody className="divide-y divide-border">
                 {websites.map((w) => {
                   const last = w.latest_check
                   return (
-                    <tr key={w.id} className="hover:bg-[#111] transition-colors">
+                    <tr key={w.id} className="hover:bg-accent transition-colors">
                       <td className="px-5 py-3">
                         <div className="flex items-center gap-2.5">
                           <div className={`w-1.5 h-1.5 rounded-full ${getStatusDot(last?.is_up)}`} />
@@ -223,7 +224,7 @@ export default function DashboardPage() {
                             <Link to={`/websites/${w.id}`} className="text-[13px] hover:text-foreground transition-colors font-medium">
                               {w.name}
                             </Link>
-                            <p className="text-[11px] text-[#555]">{w.url}</p>
+                            <p className="text-[11px] text-muted-foreground">{w.url}</p>
                           </div>
                         </div>
                       </td>
@@ -233,17 +234,17 @@ export default function DashboardPage() {
                         </span>
                       </td>
                       <td className="px-5 py-3">
-                        <span className="text-[13px] text-[#999]">
+                        <span className="text-[13px] text-muted-foreground">
                           {last?.response_time_ms != null ? `${last.response_time_ms}ms` : '-'}
                         </span>
                       </td>
                       <td className="px-5 py-3">
-                        <span className="text-[13px] text-[#555]">
+                        <span className="text-[13px] text-muted-foreground">
                           {w.url.startsWith('http://') ? 'HTTP' : 'Valid'}
                         </span>
                       </td>
                       <td className="px-5 py-3 text-right">
-                        <Link to={`/websites/${w.id}`} className="text-[12px] text-[#555] hover:text-foreground transition-colors">
+                        <Link to={`/websites/${w.id}`} className="text-[12px] text-muted-foreground hover:text-foreground transition-colors">
                           Details
                         </Link>
                       </td>
@@ -255,7 +256,7 @@ export default function DashboardPage() {
           </div>
         ) : (
           <div className="p-12 text-center">
-            <p className="text-sm text-[#555] mb-4">No monitors yet</p>
+            <p className="text-sm text-muted-foreground mb-4">No monitors yet</p>
             <Button size="sm" asChild>
               <Link to="/websites/new">+ Add your first monitor</Link>
             </Button>

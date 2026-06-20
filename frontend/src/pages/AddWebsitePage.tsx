@@ -47,20 +47,20 @@ export default function AddWebsitePage() {
       <div className="flex items-center gap-3">
         <Link
           to="/websites"
-          className="p-1.5 rounded-md text-[#555] hover:text-foreground hover:bg-[#111] transition-colors"
+          className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
         </Link>
         <div>
           <h1 className="text-xl font-semibold">Add Monitor</h1>
-          <p className="text-[13px] text-[#555] mt-0.5">Set up uptime monitoring for your website.</p>
+          <p className="text-[13px] text-muted-foreground mt-0.5">Set up uptime monitoring for your website.</p>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="rounded-lg border border-[#1a1a1a] bg-[#0a0a0a] overflow-hidden">
+      <form onSubmit={handleSubmit(onSubmit)} className="rounded-lg border border-border bg-card overflow-hidden">
         <div className="p-5 space-y-5">
           <div className="space-y-1.5">
-            <label className="text-[13px] text-[#999]">Name</label>
+            <label className="text-[13px] text-muted-foreground">Name</label>
             <Input
               placeholder="My Website"
               {...register('name')}
@@ -71,7 +71,7 @@ export default function AddWebsitePage() {
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-[13px] text-[#999]">URL</label>
+            <label className="text-[13px] text-muted-foreground">URL</label>
             <Input
               type="url"
               placeholder="https://example.com"
@@ -83,7 +83,7 @@ export default function AddWebsitePage() {
           </div>
 
           {watchedUrl && !errors.url && (
-            <div className="flex items-center gap-2 text-[12px] text-[#555]">
+            <div className="flex items-center gap-2 text-[12px] text-muted-foreground">
               <div className={`w-1.5 h-1.5 rounded-full ${watchedUrl.startsWith('https://') ? 'bg-[#22c55e]' : 'bg-[#f59e0b]'}`} />
               <span>
                 {watchedUrl.startsWith('https://') ? 'HTTPS' : 'HTTP'} site
@@ -92,7 +92,7 @@ export default function AddWebsitePage() {
           )}
 
           <div className="space-y-1.5">
-            <label className="text-[13px] text-[#999]">Check Interval</label>
+            <label className="text-[13px] text-muted-foreground">Check Interval</label>
             <div className="flex gap-2">
               {intervalOptions.map(({ value, label }) => {
                 const isSelected = Number(watchedInterval) === value
@@ -104,7 +104,7 @@ export default function AddWebsitePage() {
                     className={`flex-1 py-2 rounded-md text-[13px] font-medium transition-colors cursor-pointer border ${
                       isSelected
                         ? 'bg-foreground text-background border-foreground'
-                        : 'bg-transparent text-[#555] border-[#333] hover:border-[#555]'
+                        : 'bg-transparent text-muted-foreground border-border hover:border-muted-foreground'
                     }`}
                   >
                     {label}
@@ -118,8 +118,8 @@ export default function AddWebsitePage() {
           </div>
         </div>
 
-        <div className="px-5 py-4 border-t border-[#1a1a1a] flex items-center justify-between">
-          <p className="text-[12px] text-[#555]">
+        <div className="px-5 py-4 border-t border-border flex items-center justify-between">
+          <p className="text-[12px] text-muted-foreground">
             Checked every <span className="text-foreground">{watchedInterval || 60}s</span>
           </p>
           <Button

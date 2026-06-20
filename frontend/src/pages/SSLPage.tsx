@@ -12,7 +12,7 @@ function SSLCircle({ daysRemaining, isValid }: { daysRemaining: number | null; i
   return (
     <div className="relative w-[68px] h-[68px]">
       <svg className="w-full h-full -rotate-90" viewBox="0 0 64 64">
-        <circle cx="32" cy="32" r="28" fill="none" stroke="#1a1a1a" strokeWidth="4" />
+        <circle cx="32" cy="32" r="28" fill="none" stroke="var(--color-border)" strokeWidth="4" />
         <circle
           cx="32"
           cy="32"
@@ -47,15 +47,15 @@ function SSLCard({ websiteId, websiteName, domain }: { websiteId: string; websit
   return (
     <Link
       to={`/websites/${websiteId}`}
-      className="block rounded-lg border border-[#1a1a1a] bg-[#0a0a0a] p-5 hover:bg-[#111] transition-colors group"
+      className="block rounded-lg border border-border bg-card p-5 hover:bg-accent transition-colors group"
     >
       <div className="flex items-start justify-between mb-4">
         <div className="min-w-0">
           <p className="text-[13px] font-medium truncate">{websiteName}</p>
-          <p className="text-[11px] text-[#555] truncate">{domain}</p>
+          <p className="text-[11px] text-muted-foreground truncate">{domain}</p>
         </div>
         <span className={`text-[11px] shrink-0 ml-3 ${
-          isValid ? 'text-[#22c55e]' : isHttp ? 'text-[#f59e0b]' : ssl ? 'text-[#ef4444]' : 'text-[#555]'
+          isValid ? 'text-[#22c55e]' : isHttp ? 'text-[#f59e0b]' : ssl ? 'text-[#ef4444]' : 'text-muted-foreground'
         }`}>
           {isValid ? 'Valid' : isHttp ? 'HTTP' : ssl ? 'Invalid' : 'Not checked'}
         </span>
@@ -66,11 +66,11 @@ function SSLCard({ websiteId, websiteName, domain }: { websiteId: string; websit
           <SSLCircle daysRemaining={ssl.days_remaining} isValid={ssl.is_valid} />
           <div className="flex-1 space-y-2 text-[12px]">
             <div className="flex justify-between">
-              <span className="text-[#555]">Issuer</span>
+              <span className="text-muted-foreground">Issuer</span>
               <span className="text-foreground">{ssl.issuer || '-'}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-[#555]">Expires</span>
+              <span className="text-muted-foreground">Expires</span>
               <span className={ssl.days_remaining !== null && ssl.days_remaining < 30 ? 'text-[#f59e0b]' : 'text-foreground'}>
                 {ssl.days_remaining !== null ? `${ssl.days_remaining} days` : '-'}
               </span>
@@ -81,11 +81,11 @@ function SSLCard({ websiteId, websiteName, domain }: { websiteId: string; websit
           </div>
         </div>
       ) : isHttp ? (
-        <div className="text-center py-4 text-[12px] text-[#555]">
+        <div className="text-center py-4 text-[12px] text-muted-foreground">
           HTTP only — no SSL
         </div>
       ) : (
-        <div className="text-center py-4 text-[12px] text-[#555]">
+        <div className="text-center py-4 text-[12px] text-muted-foreground">
           Loading...
         </div>
       )}
@@ -102,8 +102,8 @@ export default function SSLPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="flex items-center gap-3 text-[#555]">
-          <div className="w-4 h-4 border-2 border-[#333] border-t-white rounded-full animate-spin" />
+        <div className="flex items-center gap-3 text-muted-foreground">
+          <div className="w-4 h-4 border-2 border-border border-t-primary rounded-full animate-spin" />
           <span className="text-sm">Loading...</span>
         </div>
       </div>
@@ -117,17 +117,17 @@ export default function SSLPage() {
     <div className="space-y-6 animate-fade-in">
       <div>
         <h1 className="text-xl font-semibold">SSL Certificates</h1>
-        <p className="text-[13px] text-[#555] mt-0.5">Monitor SSL certificate status across all services.</p>
+        <p className="text-[13px] text-muted-foreground mt-0.5">Monitor SSL certificate status across all services.</p>
       </div>
 
-      <div className="grid grid-cols-3 gap-px bg-[#1a1a1a] border border-[#1a1a1a] rounded-lg overflow-hidden">
+      <div className="grid grid-cols-3 gap-4">
         {[
           { label: 'Total', value: total },
           { label: 'Valid', value: valid, color: 'text-[#22c55e]' },
           { label: 'Issues', value: total - valid, color: total - valid > 0 ? 'text-[#ef4444]' : undefined },
         ].map(({ label, value, color }) => (
-          <div key={label} className="bg-[#0a0a0a] p-5">
-            <p className="text-[11px] text-[#555] uppercase tracking-wider">{label}</p>
+          <div key={label} className="bg-card border border-border p-5 rounded-lg">
+            <p className="text-[11px] text-muted-foreground uppercase tracking-wider">{label}</p>
             <p className={`text-2xl font-bold mt-2 ${color || 'text-foreground'}`}>{value}</p>
           </div>
         ))}
@@ -138,8 +138,8 @@ export default function SSLPage() {
           <SSLCard key={w.id} websiteId={w.id} websiteName={w.name} domain={w.url} />
         ))}
         {websites?.length === 0 && (
-          <div className="col-span-full rounded-lg border border-[#1a1a1a] bg-[#0a0a0a] p-12 text-center">
-            <p className="text-sm text-[#555]">No monitors yet. Add a website to start tracking SSL.</p>
+          <div className="col-span-full rounded-lg border border-border bg-card p-12 text-center">
+            <p className="text-sm text-muted-foreground">No monitors yet. Add a website to start tracking SSL.</p>
           </div>
         )}
       </div>

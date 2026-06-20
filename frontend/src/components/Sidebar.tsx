@@ -1,11 +1,15 @@
 import { Link, useLocation } from 'react-router-dom'
+import { useTheme } from 'next-themes'
 import { useAuth } from '../context/AuthContext'
 import {
   LayoutDashboard,
   Globe,
   Shield,
   LogOut,
+  Sun,
+  Moon,
 } from 'lucide-react'
+import { useState, useEffect } from 'react'
 
 const mainNav = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -16,17 +20,21 @@ const mainNav = [
 export default function Sidebar() {
   const { user, logout } = useAuth()
   const location = useLocation()
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => setMounted(true), [])
 
   const isActive = (to: string) => {
     return location.pathname === to || (to === '/websites' && location.pathname.startsWith('/websites'))
   }
 
   return (
-    <aside className="w-[220px] h-full flex flex-col bg-black border-r border-[#1a1a1a] select-none shrink-0">
-      <div className="h-14 flex items-center px-5 border-b border-[#1a1a1a]">
+    <aside className="w-[220px] h-full flex flex-col bg-background border-r border-border select-none shrink-0">
+      <div className="h-14 flex items-center px-5 border-b border-border">
         <Link to="/dashboard" className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-md bg-white flex items-center justify-center">
-            <span className="text-xs font-bold text-black">A</span>
+          <div className="w-7 h-7 rounded-md bg-primary flex items-center justify-center">
+            <span className="text-xs font-bold text-primary-foreground">A</span>
           </div>
           <span className="text-sm font-semibold text-foreground">AppMonitor</span>
         </Link>
@@ -35,7 +43,7 @@ export default function Sidebar() {
       <div className="p-3">
         <Link
           to="/websites/new"
-          className="w-full flex items-center justify-center gap-2 h-8 rounded-md bg-white text-black text-xs font-medium hover:bg-white/90 transition-colors"
+          className="w-full flex items-center justify-center gap-2 h-8 rounded-md bg-primary text-primary-foreground text-xs font-medium hover:opacity-90 transition-opacity"
         >
           <span className="text-sm leading-none">+</span>
           New Monitor
@@ -51,8 +59,8 @@ export default function Sidebar() {
               to={to}
               className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-[13px] transition-colors ${
                 active
-                  ? 'bg-[#111] text-foreground'
-                  : 'text-[#666] hover:text-foreground hover:bg-[#0a0a0a]'
+                  ? 'bg-accent text-foreground'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
               }`}
             >
               <Icon className="w-4 h-4 shrink-0" />
@@ -62,10 +70,10 @@ export default function Sidebar() {
         })}
       </nav>
 
-      <div className="px-3 py-3 border-t border-[#1a1a1a]">
+      <div className="px-3 py-3 border-t border-border">
         <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-full bg-[#111] flex items-center justify-center">
-            <span className="text-xs font-medium text-[#999]">
+          <div className="w-7 h-7 rounded-full bg-accent flex items-center justify-center">
+            <span className="text-xs font-medium text-muted-foreground">
               {user?.email?.charAt(0).toUpperCase() || '?'}
             </span>
           </div>
@@ -73,8 +81,15 @@ export default function Sidebar() {
             <p className="text-[13px] text-foreground truncate leading-tight">{user?.email}</p>
           </div>
           <button
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer"
+            title={theme === 'dark' ? 'Switch to light' : 'Switch to dark'}
+          >
+            {mounted && theme === 'dark' ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
+          </button>
+          <button
             onClick={logout}
-            className="p-1.5 rounded-md text-[#555] hover:text-foreground hover:bg-[#111] transition-colors cursor-pointer"
+            className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer"
             title="Sign out"
           >
             <LogOut className="w-3.5 h-3.5" />
