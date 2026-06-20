@@ -2,7 +2,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { useState } from 'react'
-import { fetchWebsite, fetchStats, fetchChecks, triggerCheck, deleteWebsite, fetchSSLInfo } from '../api/websites'
+import { fetchWebsite, fetchStats, fetchChecks, triggerCheck, deleteWebsite, fetchSSLInfo, triggerSSLCheck } from '../api/websites'
 import { Button } from '../components/ui/button'
 import {
   ArrowLeft,
@@ -99,7 +99,7 @@ export default function WebsiteDetailPage() {
   const { data: ssl } = useQuery({
     queryKey: ['ssl', id],
     queryFn: () => fetchSSLInfo(id!),
-    enabled: !!id,
+    enabled: !!id && !!website && website.url.startsWith('https://'),
   })
 
   const checkMutation = useMutation({
@@ -126,6 +126,15 @@ export default function WebsiteDetailPage() {
       navigate('/websites')
     },
     onError: () => toast.error('Failed to delete'),
+  })
+
+  const sslCheckMutation = useMutation({
+    mutationFn: () => triggerSSLCheck(id!),
+    onSuccess: (data) => {
+      queryClient.setQueryData(['ssl', id], data)
+      toast.success(data.is_valid ? `SSL valid — ${data.days_remaining} days remaining` : `SSL invalid — ${data.error_message || 'check failed'}`)
+    },
+    onError: () => toast.error('SSL check failed'),
   })
 
   if (isLoading) {
@@ -257,29 +266,47 @@ export default function WebsiteDetailPage() {
 
         <div className="glass-card rounded-2xl overflow-hidden">
           <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-white/5">
-            <div className="flex items-center gap-2">
-              <Shield className="w-4 h-4 text-accent" />
-              <h2 className="text-xs sm:text-sm font-semibold text-foreground">SSL Certificate</h2>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Shield className="w-4 h-4 text-accent" />
+                <h2 className="text-xs sm:text-sm font-semibold text-foreground">SSL Certificate</h2>
+              </div>
+              {website.url.startsWith('https://') && (
+                <button
+                  onClick={() => sslCheckMutation.mutate()}
+                  disabled={sslCheckMutation.isPending}
+                  className="text-[11px] text-muted-foreground hover:text-foreground transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  {sslCheckMutation.isPending ? 'Checking...' : 'Re-check'}
+                </button>
+              )}
             </div>
           </div>
           <div className="p-4 sm:p-6 flex flex-col items-center">
-            {ssl ? (
+            {website.url.startsWith('http://') ? (
               <>
-                {ssl.error_message === 'Not an HTTPS URL' ? (
-                  <div className="w-[100px] h-[100px] rounded-full bg-amber-500/10 flex items-center justify-center">
-                    <Shield className="w-10 h-10 text-amber-400/60" />
-                  </div>
-                ) : (
-                  <SSLCircle daysRemaining={ssl.days_remaining} isValid={ssl.is_valid} />
-                )}
+                <div className="w-[100px] h-[100px] rounded-full bg-amber-500/10 flex items-center justify-center">
+                  <Shield className="w-10 h-10 text-amber-400/60" />
+                </div>
                 <div className="mt-5 space-y-2.5 w-full text-xs">
                   <div className="flex justify-between items-center py-1.5 border-b border-white/[0.03]">
                     <span className="text-muted-foreground">Status</span>
-                    <span className={`font-semibold ${
-                      ssl.error_message === 'Not an HTTPS URL' ? 'text-amber-400' :
-                      ssl.is_valid ? 'text-green-400' : 'text-red-400'
-                    }`}>
-                      {ssl.error_message === 'Not an HTTPS URL' ? 'HTTP Only' : ssl.is_valid ? 'Valid' : 'Invalid'}
+                    <span className="font-semibold text-amber-400">HTTP Only</span>
+                  </div>
+                  <div className="flex justify-between items-center py-1.5">
+                    <span className="text-muted-foreground">Note</span>
+                    <span className="text-muted-foreground">No SSL certificate to monitor</span>
+                  </div>
+                </div>
+              </>
+            ) : ssl ? (
+              <>
+                <SSLCircle daysRemaining={ssl.days_remaining} isValid={ssl.is_valid} />
+                <div className="mt-5 space-y-2.5 w-full text-xs">
+                  <div className="flex justify-between items-center py-1.5 border-b border-white/[0.03]">
+                    <span className="text-muted-foreground">Status</span>
+                    <span className={`font-semibold ${ssl.is_valid ? 'text-green-400' : 'text-red-400'}`}>
+                      {ssl.is_valid ? 'Valid' : 'Invalid'}
                     </span>
                   </div>
                   <div className="flex justify-between items-center py-1.5 border-b border-white/[0.03]">

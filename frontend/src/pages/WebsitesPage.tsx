@@ -164,10 +164,17 @@ export default function WebsitesPage() {
                         </span>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="flex items-center gap-1.5 text-sm">
-                          <Shield className="w-3.5 h-3.5 text-green-400" />
-                          <span className="text-muted-foreground">Valid</span>
-                        </span>
+                        {w.url.startsWith('http://') ? (
+                          <span className="flex items-center gap-1.5 text-sm">
+                            <Shield className="w-3.5 h-3.5 text-amber-400/60" />
+                            <span className="text-muted-foreground">HTTP Only</span>
+                          </span>
+                        ) : (
+                          <span className="flex items-center gap-1.5 text-sm">
+                            <Shield className="w-3.5 h-3.5 text-green-400" />
+                            <span className="text-muted-foreground">Valid</span>
+                          </span>
+                        )}
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-1">

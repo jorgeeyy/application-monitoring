@@ -52,3 +52,8 @@ export async function triggerCheck(id: string): Promise<CheckResponse> {
   const { data } = await api.post<CheckResponse>(`/websites/${id}/check/`)
   return data
 }
+
+export async function triggerSSLCheck(id: string): Promise<SSLCertInfo> {
+  const { data } = await api.get<SSLCertInfo>(`/websites/${id}/ssl_check/`)
+  return data
+}

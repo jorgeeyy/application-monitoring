@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from django.db.models import Avg, Q
 from django.utils import timezone
 from datetime import timedelta
+from urllib.parse import urlparse
 
 from .models import MonitoredWebsite, UptimeCheck
 from .serializers import (
@@ -75,6 +76,8 @@ class WebsiteViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get'])
     def ssl_check(self, request, pk=None):
         website = self.get_object()
+        if website.url.startswith('http://'):
+            return Response({'hostname': urlparse(website.url).hostname, 'is_valid': False, 'error_message': 'Not an HTTPS URL'})
         from monitoring.services.checker import check_ssl
         result = check_ssl(website)
         serializer = SSLCheckSerializer(result)
@@ -85,8 +88,8 @@ class WebsiteViewSet(viewsets.ModelViewSet):
         website = self.get_object()
         from monitoring.services.checker import check_website, check_ssl
         uptime = check_website(website)
-        ssl = check_ssl(website)
+        ssl = check_ssl(website) if website.url.startswith('https://') else None
         return Response({
             'uptime': UptimeCheckSerializer(uptime).data,
-            'ssl': SSLCheckSerializer(ssl).data,
+            'ssl': SSLCheckSerializer(ssl).data if ssl else None,
         }, status=201)

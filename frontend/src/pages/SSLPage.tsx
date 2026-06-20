@@ -36,14 +36,15 @@ function SSLCircle({ daysRemaining, isValid }: { daysRemaining: number | null; i
 }
 
 function SSLCard({ websiteId, websiteName, domain }: { websiteId: string; websiteName: string; domain: string }) {
+  const isHttp = domain.startsWith('http://')
   const { data: ssl } = useQuery({
     queryKey: ['ssl', websiteId],
     queryFn: () => fetchSSLInfo(websiteId),
     refetchInterval: 60_000,
+    enabled: !isHttp,
   })
 
-  const isHttpOnly = ssl?.error_message === 'Not an HTTPS URL'
-  const isValid = ssl?.is_valid && !isHttpOnly
+  const isValid = ssl?.is_valid && !isHttp
 
   return (
     <Link
@@ -53,9 +54,9 @@ function SSLCard({ websiteId, websiteName, domain }: { websiteId: string; websit
       <div className="flex items-start justify-between mb-5">
         <div className="flex items-center gap-3">
           <div className={`w-11 h-11 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 ${
-            isValid ? 'bg-green-500/10' : isHttpOnly ? 'bg-amber-500/10' : ssl ? 'bg-red-500/10' : 'bg-muted/50'
+            isValid ? 'bg-green-500/10' : isHttp ? 'bg-amber-500/10' : ssl ? 'bg-red-500/10' : 'bg-muted/50'
           }`}>
-            <Shield className={`w-5 h-5 ${isValid ? 'text-green-400' : isHttpOnly ? 'text-amber-400' : ssl ? 'text-red-400' : 'text-muted-foreground'}`} />
+            <Shield className={`w-5 h-5 ${isValid ? 'text-green-400' : isHttp ? 'text-amber-400' : ssl ? 'text-red-400' : 'text-muted-foreground'}`} />
           </div>
           <div>
             <p className="text-sm font-semibold text-foreground group-hover:text-accent transition-colors">{websiteName}</p>
@@ -65,19 +66,19 @@ function SSLCard({ websiteId, websiteName, domain }: { websiteId: string; websit
         <span className={`badge-modern px-2.5 py-1 rounded-full border ${
           isValid
             ? 'bg-green-500/10 border-green-500/20 text-green-400'
-            : isHttpOnly
+            : isHttp
             ? 'bg-amber-500/10 border-amber-500/20 text-amber-400'
             : ssl
             ? 'bg-red-500/10 border-red-500/20 text-red-400'
             : 'bg-muted border-border text-muted-foreground'
         }`}>
-          {isValid ? 'Valid' : isHttpOnly ? 'HTTP Only' : ssl ? 'Invalid' : 'Unknown'}
+          {isValid ? 'Valid' : isHttp ? 'HTTP Only' : ssl ? 'Invalid' : 'Unknown'}
         </span>
       </div>
 
       {ssl ? (
         <div className="flex items-center gap-4">
-          {isHttpOnly ? (
+          {isHttp ? (
             <div className="w-[68px] h-[68px] rounded-full bg-amber-500/10 flex items-center justify-center">
               <Shield className="w-6 h-6 text-amber-400/60" />
             </div>
@@ -106,6 +107,10 @@ function SSLCard({ websiteId, websiteName, domain }: { websiteId: string; websit
               </div>
             )}
           </div>
+        </div>
+      ) : isHttp ? (
+        <div className="flex items-center justify-center py-6">
+          <p className="text-xs text-amber-400/70">HTTP only — no SSL certificate</p>
         </div>
       ) : (
         <div className="flex items-center justify-center py-6">
