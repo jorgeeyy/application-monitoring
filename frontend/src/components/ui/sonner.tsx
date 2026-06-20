@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils'
 export function Toaster() {
   return (
     <SonnerToaster
+      position="top-right"
       className={cn()}
       toastOptions={{
         classNames: {

@@ -115,26 +115,26 @@ export default function WebsiteDetailPage() {
           : `DOWN - ${data.uptime.error_message || data.uptime.status_code}`
       )
     },
-    onError: () => toast.error('Check failed'),
+    onError: () => toast.error('Check failed — try again'),
   })
 
   const deleteMutation = useMutation({
     mutationFn: () => deleteWebsite(id!),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['websites'] })
-      toast.success('Website deleted')
+      toast.success('Monitor deleted')
       navigate('/websites')
     },
-    onError: () => toast.error('Failed to delete'),
+    onError: (err: any) => toast.error(err.response?.data?.detail || 'Failed to delete'),
   })
 
   const sslCheckMutation = useMutation({
     mutationFn: () => triggerSSLCheck(id!),
     onSuccess: (data) => {
       queryClient.setQueryData(['ssl', id], data)
-      toast.success(data.is_valid ? `SSL valid — ${data.days_remaining} days remaining` : `SSL invalid — ${data.error_message || 'check failed'}`)
+      toast.success(data.is_valid ? `SSL valid — ${data.days_remaining} days remaining` : `SSL invalid — ${data.error_message || 'certificate issue'}`)
     },
-    onError: () => toast.error('SSL check failed'),
+    onError: (err: any) => toast.error(err.response?.data?.detail || 'SSL check failed'),
   })
 
   if (isLoading) {
@@ -275,9 +275,10 @@ export default function WebsiteDetailPage() {
                 <button
                   onClick={() => sslCheckMutation.mutate()}
                   disabled={sslCheckMutation.isPending}
-                  className="text-[11px] text-muted-foreground hover:text-foreground transition-colors cursor-pointer disabled:opacity-50"
+                  className="inline-flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-lg text-muted-foreground hover:text-foreground hover:bg-white/[0.05] border border-white/5 transition-all cursor-pointer disabled:opacity-50"
                 >
-                  {sslCheckMutation.isPending ? 'Checking...' : 'Re-check'}
+                  <RefreshCw className={`w-3 h-3 ${sslCheckMutation.isPending ? 'animate-spin' : ''}`} />
+                  {sslCheckMutation.isPending ? 'Checking...' : 'Re-check SSL'}
                 </button>
               )}
             </div>

@@ -28,7 +28,7 @@ export default function AddWebsitePage() {
       navigate(`/websites/${website.id}`)
     },
     onError: (err: any) => {
-      toast.error(err.response?.data?.url?.[0] || err.response?.data?.detail || 'Failed to add website')
+      toast.error(err.response?.data?.url?.[0] || err.response?.data?.name?.[0] || err.response?.data?.detail || 'Failed to add monitor')
     },
   })
 

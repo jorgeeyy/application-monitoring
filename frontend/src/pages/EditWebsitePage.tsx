@@ -42,9 +42,7 @@ export default function EditWebsitePage() {
       toast.success('Monitor updated')
       navigate(`/websites/${id}`)
     },
-    onError: (err: any) => {
-      toast.error(err.response?.data?.url?.[0] || err.response?.data?.detail || 'Failed to update')
-    },
+    onError: (err: any) => toast.error(err.response?.data?.url?.[0] || err.response?.data?.name?.[0] || err.response?.data?.detail || 'Failed to update'),
   })
 
   const deleteMutation = useMutation({
@@ -54,7 +52,7 @@ export default function EditWebsitePage() {
       toast.success('Monitor deleted')
       navigate('/websites')
     },
-    onError: () => toast.error('Failed to delete'),
+    onError: (err: any) => toast.error(err.response?.data?.detail || 'Failed to delete'),
   })
 
   const onSubmit = (data: WebsiteFormData) => updateMutation.mutate(data)
