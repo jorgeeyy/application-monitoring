@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { fetchWebsites } from '../api/websites'
+import { fetchWebsites, fetchChart } from '../api/websites'
 import { Button } from '../components/ui/button'
 import {
   AreaChart,
@@ -36,6 +36,32 @@ export default function DashboardPage() {
     refetchInterval: 30_000,
   })
 
+  const websiteIds = websites?.map((w) => w.id) ?? []
+
+  const { data: allChartData } = useQuery({
+    queryKey: ['dashboard-chart', websiteIds],
+    queryFn: async () => {
+      const results = await Promise.all(
+        websiteIds.map((id) => fetchChart(id, 24).catch(() => []))
+      )
+      // Aggregate by time bucket — average response across all websites
+      const bucketMap = new Map<string, { total: number; count: number }>()
+      for (const points of results) {
+        for (const p of points) {
+          const existing = bucketMap.get(p.time) || { total: 0, count: 0 }
+          existing.total += p.response
+          existing.count += 1
+          bucketMap.set(p.time, existing)
+        }
+      }
+      return Array.from(bucketMap.entries())
+        .map(([time, { total, count }]) => ({ time, latency: Math.round(total / count) }))
+        .sort((a, b) => a.time.localeCompare(b.time))
+    },
+    enabled: websiteIds.length > 0,
+    refetchInterval: 60_000,
+  })
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -59,20 +85,7 @@ export default function DashboardPage() {
       )
     : 0
 
-  const chartData = [
-    { time: '00:00', latency: 145 },
-    { time: '02:00', latency: 132 },
-    { time: '04:00', latency: 128 },
-    { time: '06:00', latency: 135 },
-    { time: '08:00', latency: 168 },
-    { time: '10:00', latency: 182 },
-    { time: '12:00', latency: 195 },
-    { time: '14:00', latency: 178 },
-    { time: '16:00', latency: 142 },
-    { time: '18:00', latency: 128 },
-    { time: '20:00', latency: 118 },
-    { time: 'Now', latency: 112 },
-  ]
+  const chartData = allChartData ?? []
 
   const recentEvents = websites
     ?.filter((w) => w.latest_check)
@@ -124,8 +137,9 @@ export default function DashboardPage() {
             <p className="text-[11px] text-muted-foreground mt-0.5">Last 24 hours</p>
           </div>
           <div className="p-5">
-            <ResponsiveContainer width="100%" height={200}>
-              <AreaChart data={chartData}>
+            {chartData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={200}>
+                <AreaChart data={chartData}>
                 <defs>
                   <linearGradient id="colorLatency" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#ededed" stopOpacity={0.08} />
@@ -157,6 +171,11 @@ export default function DashboardPage() {
                 />
               </AreaChart>
             </ResponsiveContainer>
+            ) : (
+              <div className="flex items-center justify-center h-[200px] text-[13px] text-muted-foreground">
+                No data yet — checks run every 60s
+              </div>
+            )}
           </div>
         </div>
 
