@@ -13,11 +13,6 @@ class MonitoredWebsite(models.Model):
     )
     name = models.CharField(_('name'), max_length=255)
     url = models.URLField(_('URL'))
-    check_interval = models.PositiveIntegerField(
-        _('check interval'),
-        default=60,
-        help_text=_('Interval in seconds between checks'),
-    )
     is_active = models.BooleanField(_('active'), default=True)
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)
@@ -55,3 +50,37 @@ class UptimeCheck(models.Model):
     def __str__(self):
         status = 'UP' if self.is_up else 'DOWN'
         return f'{self.website.name} - {status} @ {self.checked_at}'
+
+
+class AggregatedCheck(models.Model):
+    RESOLUTION_CHOICES = [
+        ('hourly', 'Hourly'),
+        ('daily', 'Daily'),
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    website = models.ForeignKey(
+        MonitoredWebsite,
+        on_delete=models.CASCADE,
+        related_name='aggregated_checks',
+    )
+    resolution = models.CharField(max_length=10, choices=RESOLUTION_CHOICES)
+    bucket_start = models.DateTimeField()
+    total_checks = models.PositiveIntegerField(default=0)
+    up_checks = models.PositiveIntegerField(default=0)
+    uptime_percentage = models.FloatField(default=0.0)
+    avg_response_time_ms = models.FloatField(null=True, blank=True)
+    min_response_time_ms = models.PositiveIntegerField(null=True, blank=True)
+    max_response_time_ms = models.PositiveIntegerField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = _('aggregated check')
+        verbose_name_plural = _('aggregated checks')
+        ordering = ['-bucket_start']
+        unique_together = ['website', 'resolution', 'bucket_start']
+        indexes = [
+            models.Index(fields=['website', 'resolution', '-bucket_start']),
+        ]
+
+    def __str__(self):
+        return f'{self.website.name} - {self.resolution} @ {self.bucket_start}'

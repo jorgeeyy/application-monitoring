@@ -19,7 +19,6 @@ export interface Website {
   id: string
   name: string
   url: string
-  check_interval: number
   is_active: boolean
   created_at: string
   updated_at: string
@@ -48,7 +47,7 @@ export interface SSLCertInfo {
 
 export interface CheckResponse {
   uptime: UptimeCheck
-  ssl: SSLCertInfo
+  ssl: SSLCertInfo | null
 }
 
 export interface PaginatedResponse<T> {
@@ -74,5 +73,12 @@ export interface RegisterData {
 export interface WebsiteFormData {
   name: string
   url: string
-  check_interval: number
+}
+
+export interface ChartDataPoint {
+  time: string
+  response: number
+  is_up?: boolean
+  uptime?: number
+  checks?: number
 }

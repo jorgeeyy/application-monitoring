@@ -3,6 +3,7 @@ Django base settings for application-monitoring project.
 """
 
 import os
+import logging
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -150,3 +151,47 @@ SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SECURE = False  # True in production
 SESSION_COOKIE_SAMESITE = 'Lax'
 SESSION_COOKIE_AGE = 60 * 60 * 24 * 7  # 7 days
+
+# Logging
+LOG_DIR = BASE_DIR / 'logs'
+LOG_DIR.mkdir(exist_ok=True)
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '[{asctime}] {levelname} {name}: {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+        'file': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': LOG_DIR / 'monitoring.log',
+            'maxBytes': 5 * 1024 * 1024,  # 5 MB
+            'backupCount': 3,
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'monitoring': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'django': {
+            'handlers': ['console', 'file'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+    },
+    'root': {
+        'handlers': ['console', 'file'],
+        'level': 'INFO',
+    },
+}

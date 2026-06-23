@@ -12,13 +12,11 @@ import { ArrowLeft } from 'lucide-react'
 export default function AddWebsitePage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const { register, handleSubmit, watch, setValue, formState: { errors, isSubmitting } } = useForm<WebsiteFormData>({
+  const { register, handleSubmit, watch, formState: { errors, isSubmitting } } = useForm<WebsiteFormData>({
     resolver: zodResolver(websiteSchema),
-    defaultValues: { check_interval: 60 },
   })
 
   const watchedUrl = watch('url')
-  const watchedInterval = watch('check_interval')
 
   const mutation = useMutation({
     mutationFn: (data: WebsiteFormData) => createWebsite(data),
@@ -33,14 +31,6 @@ export default function AddWebsitePage() {
   })
 
   const onSubmit = (data: WebsiteFormData) => mutation.mutate(data)
-
-  const intervalOptions = [
-    { value: 30, label: '30s' },
-    { value: 60, label: '1m' },
-    { value: 300, label: '5m' },
-    { value: 900, label: '15m' },
-    { value: 3600, label: '1h' },
-  ]
 
   return (
     <div className="max-w-2xl space-y-6 animate-fade-in">
@@ -90,37 +80,11 @@ export default function AddWebsitePage() {
               </span>
             </div>
           )}
-
-          <div className="space-y-1.5">
-            <label className="text-[13px] text-muted-foreground">Check Interval</label>
-            <div className="flex gap-2">
-              {intervalOptions.map(({ value, label }) => {
-                const isSelected = Number(watchedInterval) === value
-                return (
-                  <button
-                    key={value}
-                    type="button"
-                    onClick={() => setValue('check_interval', value, { shouldValidate: true })}
-                    className={`flex-1 py-2 rounded-md text-[13px] font-medium transition-colors cursor-pointer border ${
-                      isSelected
-                        ? 'bg-foreground text-background border-foreground'
-                        : 'bg-transparent text-muted-foreground border-border hover:border-muted-foreground'
-                    }`}
-                  >
-                    {label}
-                  </button>
-                )
-              })}
-            </div>
-            {errors.check_interval && (
-              <p className="text-xs text-red-400">{errors.check_interval.message}</p>
-            )}
-          </div>
         </div>
 
         <div className="px-5 py-4 border-t border-border flex items-center justify-between">
           <p className="text-[12px] text-muted-foreground">
-            Checked every <span className="text-foreground">{watchedInterval || 60}s</span>
+            Checked every <span className="text-foreground">60s</span>
           </p>
           <Button
             type="submit"

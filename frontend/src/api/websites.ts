@@ -6,6 +6,7 @@ import type {
   PaginatedResponse,
   WebsiteFormData,
   UptimeCheck,
+  ChartDataPoint,
 } from '../types'
 import api from './client'
 
@@ -55,5 +56,10 @@ export async function triggerCheck(id: string): Promise<CheckResponse> {
 
 export async function triggerSSLCheck(id: string): Promise<SSLCertInfo> {
   const { data } = await api.get<SSLCertInfo>(`/websites/${id}/ssl_check/`)
+  return data
+}
+
+export async function fetchChart(id: string, hours: number = 24): Promise<ChartDataPoint[]> {
+  const { data } = await api.get<ChartDataPoint[]>(`/websites/${id}/chart/`, { params: { hours } })
   return data
 }

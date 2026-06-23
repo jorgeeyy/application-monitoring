@@ -4,7 +4,7 @@ from .models import MonitoredWebsite, UptimeCheck
 
 @admin.register(MonitoredWebsite)
 class MonitoredWebsiteAdmin(admin.ModelAdmin):
-    list_display = ['name', 'url', 'user', 'is_active', 'check_interval', 'created_at']
+    list_display = ['name', 'url', 'user', 'is_active', 'created_at']
     list_filter = ['is_active']
     search_fields = ['name', 'url', 'user__email']
 

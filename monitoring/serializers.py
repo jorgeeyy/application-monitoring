@@ -16,7 +16,7 @@ class WebsiteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MonitoredWebsite
-        fields = ['id', 'name', 'url', 'check_interval', 'is_active', 'created_at', 'updated_at', 'latest_check']
+        fields = ['id', 'name', 'url', 'is_active', 'created_at', 'updated_at', 'latest_check']
         read_only_fields = ['id', 'created_at', 'updated_at', 'latest_check']
 
     def get_latest_check(self, obj):
@@ -37,7 +37,7 @@ class WebsiteDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MonitoredWebsite
-        fields = ['id', 'name', 'url', 'check_interval', 'is_active', 'created_at', 'updated_at', 'latest_check', 'checks']
+        fields = ['id', 'name', 'url', 'is_active', 'created_at', 'updated_at', 'latest_check', 'checks']
         read_only_fields = ['id', 'created_at', 'updated_at', 'latest_check', 'checks']
 
     def get_latest_check(self, obj):

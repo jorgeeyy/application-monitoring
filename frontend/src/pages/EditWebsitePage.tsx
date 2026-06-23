@@ -29,16 +29,13 @@ export default function EditWebsitePage() {
     enabled: !!id,
   })
 
-  const { register, handleSubmit, watch, setValue, formState: { errors, isSubmitting } } = useForm<WebsiteFormData>({
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<WebsiteFormData>({
     resolver: zodResolver(websiteSchema),
     values: website ? {
       name: website.name,
       url: website.url,
-      check_interval: website.check_interval,
     } : undefined,
   })
-
-  const watchedInterval = watch('check_interval')
 
   const updateMutation = useMutation({
     mutationFn: (data: WebsiteFormData) => updateWebsite(id!, data),
@@ -62,14 +59,6 @@ export default function EditWebsitePage() {
   })
 
   const onSubmit = (data: WebsiteFormData) => updateMutation.mutate(data)
-
-  const intervalOptions = [
-    { value: 30, label: '30s' },
-    { value: 60, label: '1m' },
-    { value: 300, label: '5m' },
-    { value: 900, label: '15m' },
-    { value: 3600, label: '1h' },
-  ]
 
   if (isLoading) {
     return (
@@ -128,30 +117,6 @@ export default function EditWebsitePage() {
               {...register('url')}
             />
             {errors.url && <p className="text-xs text-red-400">{errors.url.message}</p>}
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-[13px] text-muted-foreground">Check Interval</label>
-            <div className="flex gap-2">
-              {intervalOptions.map(({ value, label }) => {
-                const isSelected = Number(watchedInterval) === value
-                return (
-                  <button
-                    key={value}
-                    type="button"
-                    onClick={() => setValue('check_interval', value, { shouldValidate: true })}
-                    className={`flex-1 py-2 rounded-md text-[13px] font-medium transition-colors cursor-pointer border ${
-                      isSelected
-                        ? 'bg-foreground text-background border-foreground'
-                        : 'bg-transparent text-muted-foreground border-border hover:border-muted-foreground'
-                    }`}
-                  >
-                    {label}
-                  </button>
-                )
-              })}
-            </div>
-            {errors.check_interval && <p className="text-xs text-red-400">{errors.check_interval.message}</p>}
           </div>
         </div>
 

@@ -22,7 +22,6 @@ export const websiteSchema = z.object({
     (val) => val.startsWith('http://') || val.startsWith('https://'),
     'URL must start with http:// or https://',
   ),
-  check_interval: z.number().int().min(10, 'Minimum 10 seconds').max(3600, 'Maximum 3600 seconds'),
 })
 
 export type LoginFormData = z.infer<typeof loginSchema>
