@@ -4,7 +4,10 @@ import { useState } from 'react'
 import { fetchWebsites } from '../api/websites'
 import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
+import { Pagination } from '../components/ui/pagination'
 import { Search } from 'lucide-react'
+
+const PAGE_SIZE = 10
 
 function getStatusDot(isUp: boolean | null | undefined) {
   if (isUp === true) return 'bg-[#22c55e]'
@@ -32,6 +35,7 @@ export default function WebsitesPage() {
   })
 
   const [search, setSearch] = useState('')
+  const [page, setPage] = useState(1)
 
   if (isLoading) {
     return (
@@ -49,6 +53,9 @@ export default function WebsitesPage() {
       w.name.toLowerCase().includes(search.toLowerCase()) ||
       w.url.toLowerCase().includes(search.toLowerCase())
   ) ?? []
+
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE)
+  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -69,7 +76,7 @@ export default function WebsitesPage() {
             <Input
               placeholder="Search monitors..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => { setSearch(e.target.value); setPage(1) }}
               className="pl-9 h-8 bg-transparent border-none focus:ring-0 text-[13px]"
             />
           </div>
@@ -77,6 +84,7 @@ export default function WebsitesPage() {
         </div>
 
         {filtered.length > 0 ? (
+          <>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
@@ -89,7 +97,7 @@ export default function WebsitesPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {filtered.map((w) => {
+                {paginated.map((w) => {
                   const last = w.latest_check
                   return (
                     <tr key={w.id} className="hover:bg-accent/50 transition-colors">
@@ -130,6 +138,8 @@ export default function WebsitesPage() {
               </tbody>
             </table>
           </div>
+          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+          </>
         ) : search ? (
           <div className="p-12 text-center text-[13px] text-muted-foreground">
             No monitors match "{search}"

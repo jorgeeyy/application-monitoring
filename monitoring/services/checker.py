@@ -4,7 +4,7 @@ import socket
 import datetime
 import httpx
 from urllib.parse import urlparse
-from monitoring.models import UptimeCheck
+from monitoring.models import UptimeCheck, SSLCheck
 
 
 def check_website(website):
@@ -51,9 +51,19 @@ def check_website(website):
 def check_ssl(website):
     hostname = urlparse(website.url).hostname
     if not hostname:
-        return {'hostname': website.url, 'is_valid': False, 'error_message': 'Invalid URL'}
+        return SSLCheck.objects.create(
+            website=website,
+            hostname=website.url,
+            is_valid=False,
+            error_message='Invalid URL',
+        )
     if website.url.startswith('http://'):
-        return {'hostname': hostname, 'is_valid': False, 'error_message': 'Not an HTTPS URL'}
+        return SSLCheck.objects.create(
+            website=website,
+            hostname=hostname,
+            is_valid=False,
+            error_message='Not an HTTPS URL',
+        )
 
     try:
         context = ssl.create_default_context()
@@ -72,16 +82,26 @@ def check_ssl(website):
         issuer = dict(x for pair in cert.get('issuer', []) for x in pair)
         subject = dict(x for pair in cert.get('subject', []) for x in pair)
 
-        return {
-            'hostname': hostname,
-            'is_valid': days_remaining is not None and days_remaining > 0,
-            'issuer': issuer.get('organizationName', 'Unknown'),
-            'subject': subject.get('commonName', hostname),
-            'expires_at': expires_at.isoformat() if expires_at else None,
-            'days_remaining': days_remaining,
-            'error_message': None,
-        }
+        return SSLCheck.objects.create(
+            website=website,
+            hostname=hostname,
+            is_valid=days_remaining is not None and days_remaining > 0,
+            issuer=issuer.get('organizationName', 'Unknown'),
+            subject=subject.get('commonName', hostname),
+            expires_at=expires_at,
+            days_remaining=days_remaining,
+        )
     except ssl.SSLCertVerificationError as e:
-        return {'hostname': hostname, 'is_valid': False, 'error_message': str(e)}
+        return SSLCheck.objects.create(
+            website=website,
+            hostname=hostname,
+            is_valid=False,
+            error_message=str(e),
+        )
     except Exception as e:
-        return {'hostname': hostname, 'is_valid': False, 'error_message': str(e)}
+        return SSLCheck.objects.create(
+            website=website,
+            hostname=hostname,
+            is_valid=False,
+            error_message=str(e),
+        )

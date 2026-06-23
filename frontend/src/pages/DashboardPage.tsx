@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
+import { useState } from 'react'
 import { fetchWebsites, fetchChart } from '../api/websites'
 import { Button } from '../components/ui/button'
+import { Pagination } from '../components/ui/pagination'
 import {
   AreaChart,
   Area,
@@ -30,6 +32,7 @@ function getStatusColor(isUp: boolean | null | undefined) {
 }
 
 export default function DashboardPage() {
+  const [monitorsPage, setMonitorsPage] = useState(1)
   const { data: websites, isLoading } = useQuery({
     queryKey: ['websites'],
     queryFn: fetchWebsites,
@@ -99,6 +102,10 @@ export default function DashboardPage() {
       responseTime: w.latest_check!.response_time_ms,
       checkedAt: w.latest_check!.checked_at,
     })) ?? []
+
+  const MONITORS_PAGE_SIZE = 10
+  const monitorsTotalPages = Math.ceil((websites?.length ?? 0) / MONITORS_PAGE_SIZE)
+  const paginatedWebsites = websites?.slice((monitorsPage - 1) * MONITORS_PAGE_SIZE, monitorsPage * MONITORS_PAGE_SIZE)
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -220,6 +227,7 @@ export default function DashboardPage() {
         </div>
 
         {websites && websites.length > 0 ? (
+          <>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
@@ -232,7 +240,7 @@ export default function DashboardPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {websites.map((w) => {
+                {paginatedWebsites?.map((w) => {
                   const last = w.latest_check
                   return (
                     <tr key={w.id} className="hover:bg-accent transition-colors">
@@ -273,6 +281,8 @@ export default function DashboardPage() {
               </tbody>
             </table>
           </div>
+          <Pagination page={monitorsPage} totalPages={monitorsTotalPages} onPageChange={setMonitorsPage} />
+          </>
         ) : (
           <div className="p-12 text-center">
             <p className="text-sm text-muted-foreground mb-4">No monitors yet</p>

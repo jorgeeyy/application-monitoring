@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.utils import timezone
 from datetime import timedelta
-from .models import MonitoredWebsite, UptimeCheck
+from .models import MonitoredWebsite, UptimeCheck, SSLCheck as SSLCheckModel
 
 
 class UptimeCheckSerializer(serializers.ModelSerializer):
@@ -60,11 +60,8 @@ class WebsiteStatsSerializer(serializers.Serializer):
     average_response_time_ms = serializers.FloatField(allow_null=True)
 
 
-class SSLCheckSerializer(serializers.Serializer):
-    hostname = serializers.CharField()
-    is_valid = serializers.BooleanField()
-    issuer = serializers.CharField(allow_null=True)
-    subject = serializers.CharField(allow_null=True)
-    expires_at = serializers.DateTimeField(allow_null=True)
-    days_remaining = serializers.IntegerField(allow_null=True)
-    error_message = serializers.CharField(allow_null=True)
+class SSLCheckSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SSLCheckModel
+        fields = ['id', 'hostname', 'is_valid', 'issuer', 'subject', 'expires_at', 'days_remaining', 'error_message', 'checked_at']
+        read_only_fields = ['id', 'checked_at']

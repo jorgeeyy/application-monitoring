@@ -38,7 +38,6 @@ function SSLCard({ websiteId, websiteName, domain }: { websiteId: string; websit
   const { data: ssl } = useQuery({
     queryKey: ['ssl', websiteId],
     queryFn: () => fetchSSLInfo(websiteId),
-    refetchInterval: 60_000,
     enabled: !isHttp,
   })
 

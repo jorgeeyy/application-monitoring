@@ -4,6 +4,7 @@ import { toast } from 'sonner'
 import { useState } from 'react'
 import { fetchWebsite, fetchStats, fetchChecks, triggerCheck, deleteWebsite, fetchSSLInfo, triggerSSLCheck } from '../api/websites'
 import { Button } from '../components/ui/button'
+import { Pagination } from '../components/ui/pagination'
 import {
   AreaChart,
   Area,
@@ -69,6 +70,8 @@ export default function WebsiteDetailPage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [showDelete, setShowDelete] = useState(false)
+  const [checksPage, setChecksPage] = useState(1)
+  const CHECKS_PAGE_SIZE = 10
 
   const { data: website, isLoading } = useQuery({
     queryKey: ['website', id],
@@ -337,13 +340,14 @@ export default function WebsiteDetailPage() {
 
       {/* Event Log */}
       <div className="rounded-lg border border-border bg-card overflow-hidden">
-        <div className="px-5 py-3 border-b border-border flex items-center justify-between">
+        <div className="px-5 py-3 border-b border-border">
           <span className="text-[13px] font-medium">Event Log</span>
-          {checks && checks.length > 0 && (
-            <span className="text-[11px] text-muted-foreground">Last {Math.min(checks.length, 20)}</span>
-          )}
         </div>
-        {checks && checks.length > 0 ? (
+        {checks && checks.length > 0 ? (() => {
+          const checksTotalPages = Math.ceil(checks.length / CHECKS_PAGE_SIZE)
+          const paginatedChecks = checks.slice((checksPage - 1) * CHECKS_PAGE_SIZE, checksPage * CHECKS_PAGE_SIZE)
+          return (
+          <>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
@@ -355,7 +359,7 @@ export default function WebsiteDetailPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {checks.slice(0, 20).map((c) => (
+                {paginatedChecks.map((c) => (
                   <tr key={c.id} className="hover:bg-accent transition-colors">
                     <td className="px-5 py-2.5 text-[12px] text-muted-foreground">
                       {new Date(c.checked_at).toLocaleString()}
@@ -378,7 +382,10 @@ export default function WebsiteDetailPage() {
               </tbody>
             </table>
           </div>
-        ) : (
+          <Pagination page={checksPage} totalPages={checksTotalPages} onPageChange={setChecksPage} />
+          </>
+          )
+        })() : (
           <div className="p-8 text-center text-[13px] text-muted-foreground">
             No events yet. Click "Check now" to run your first check.
           </div>

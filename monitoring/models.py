@@ -84,3 +84,32 @@ class AggregatedCheck(models.Model):
 
     def __str__(self):
         return f'{self.website.name} - {self.resolution} @ {self.bucket_start}'
+
+
+class SSLCheck(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    website = models.ForeignKey(
+        MonitoredWebsite,
+        on_delete=models.CASCADE,
+        related_name='ssl_checks',
+    )
+    hostname = models.CharField(_('hostname'), max_length=255)
+    is_valid = models.BooleanField(_('is valid'))
+    issuer = models.CharField(_('issuer'), max_length=255, blank=True, null=True)
+    subject = models.CharField(_('subject'), max_length=255, blank=True, null=True)
+    expires_at = models.DateTimeField(_('expires at'), null=True, blank=True)
+    days_remaining = models.IntegerField(_('days remaining'), null=True, blank=True)
+    error_message = models.TextField(_('error message'), blank=True, null=True)
+    checked_at = models.DateTimeField(_('checked at'), auto_now_add=True)
+
+    class Meta:
+        verbose_name = _('SSL check')
+        verbose_name_plural = _('SSL checks')
+        ordering = ['-checked_at']
+        indexes = [
+            models.Index(fields=['website', '-checked_at']),
+        ]
+
+    def __str__(self):
+        status = 'valid' if self.is_valid else 'invalid'
+        return f'{self.hostname} - {status} @ {self.checked_at}'

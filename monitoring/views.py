@@ -134,15 +134,24 @@ class WebsiteViewSet(viewsets.ModelViewSet):
 
         return Response(data)
 
-    @action(detail=True, methods=['get'])
+    @action(detail=True, methods=['get', 'post'])
     def ssl_check(self, request, pk=None):
         website = self.get_object()
+        if request.method == 'POST':
+            # Manual re-check: do a live check and save to DB
+            from monitoring.services.checker import check_ssl
+            result = check_ssl(website)
+            serializer = SSLCheckSerializer(result)
+            return Response(serializer.data, status=201)
+        # GET: read latest from DB
+        latest = website.ssl_checks.first()
+        if latest:
+            serializer = SSLCheckSerializer(latest)
+            return Response(serializer.data)
+        # No SSL data yet — return a default for HTTP sites
         if website.url.startswith('http://'):
             return Response({'hostname': urlparse(website.url).hostname, 'is_valid': False, 'error_message': 'Not an HTTPS URL'})
-        from monitoring.services.checker import check_ssl
-        result = check_ssl(website)
-        serializer = SSLCheckSerializer(result)
-        return Response(serializer.data)
+        return Response({'hostname': urlparse(website.url).hostname, 'is_valid': False, 'error_message': 'No SSL data yet'})
 
     @action(detail=True, methods=['post'])
     def check(self, request, pk=None):

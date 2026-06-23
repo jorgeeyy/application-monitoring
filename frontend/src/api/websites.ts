@@ -3,7 +3,6 @@ import type {
   WebsiteStats,
   SSLCertInfo,
   CheckResponse,
-  PaginatedResponse,
   WebsiteFormData,
   UptimeCheck,
   ChartDataPoint,
@@ -11,8 +10,8 @@ import type {
 import api from './client'
 
 export async function fetchWebsites(): Promise<Website[]> {
-  const { data } = await api.get<PaginatedResponse<Website>>('/websites/')
-  return data.results
+  const { data } = await api.get<Website[]>('/websites/')
+  return data
 }
 
 export async function fetchWebsite(id: string): Promise<Website> {
@@ -35,8 +34,8 @@ export async function deleteWebsite(id: string): Promise<void> {
 }
 
 export async function fetchChecks(id: string): Promise<UptimeCheck[]> {
-  const { data } = await api.get<PaginatedResponse<UptimeCheck>>(`/websites/${id}/checks/`)
-  return data.results
+  const { data } = await api.get<UptimeCheck[]>(`/websites/${id}/checks/`)
+  return data
 }
 
 export async function fetchStats(id: string): Promise<WebsiteStats> {
@@ -55,7 +54,7 @@ export async function triggerCheck(id: string): Promise<CheckResponse> {
 }
 
 export async function triggerSSLCheck(id: string): Promise<SSLCertInfo> {
-  const { data } = await api.get<SSLCertInfo>(`/websites/${id}/ssl_check/`)
+  const { data } = await api.post<SSLCertInfo>(`/websites/${id}/ssl_check/`)
   return data
 }
 

@@ -2,7 +2,7 @@ import logging
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from monitoring.models import MonitoredWebsite
-from monitoring.services.checker import check_website
+from monitoring.services.checker import check_website, check_ssl
 
 logger = logging.getLogger(__name__)
 scheduler = BackgroundScheduler()
@@ -18,6 +18,18 @@ def check_all_websites():
             logger.info(f'{website.name}: {status} ({result.status_code}) {result.response_time_ms}ms')
         except Exception as e:
             logger.error(f'Error checking {website.name}: {e}')
+
+
+def check_all_ssl():
+    websites = MonitoredWebsite.objects.filter(is_active=True, url__startswith='https://')
+    logger.info(f'Checking SSL for {websites.count()} websites')
+    for website in websites:
+        try:
+            result = check_ssl(website)
+            status = 'valid' if result.is_valid else 'invalid'
+            logger.info(f'{website.name} SSL: {status} ({result.days_remaining} days remaining)')
+        except Exception as e:
+            logger.error(f'Error checking SSL for {website.name}: {e}')
 
 
 def run_aggregation():
@@ -38,6 +50,13 @@ def start_scheduler():
         replace_existing=True,
     )
     scheduler.add_job(
+        check_all_ssl,
+        'interval',
+        hours=24,
+        id='ssl_checks',
+        replace_existing=True,
+    )
+    scheduler.add_job(
         run_aggregation,
         'interval',
         minutes=5,
@@ -45,4 +64,4 @@ def start_scheduler():
         replace_existing=True,
     )
     scheduler.start()
-    logger.info('Scheduler started - checks every 60s, aggregation every 5min')
+    logger.info('Scheduler started - checks every 60s, SSL every 24h, aggregation every 5min')

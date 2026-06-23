@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import MonitoredWebsite, UptimeCheck
+from .models import MonitoredWebsite, UptimeCheck, SSLCheck
 
 
 @admin.register(MonitoredWebsite)
@@ -14,3 +14,10 @@ class UptimeCheckAdmin(admin.ModelAdmin):
     list_display = ['website', 'is_up', 'status_code', 'response_time_ms', 'checked_at']
     list_filter = ['is_up', 'checked_at']
     search_fields = ['website__name', 'website__url']
+
+
+@admin.register(SSLCheck)
+class SSLCheckAdmin(admin.ModelAdmin):
+    list_display = ['hostname', 'is_valid', 'days_remaining', 'issuer', 'checked_at']
+    list_filter = ['is_valid', 'checked_at']
+    search_fields = ['hostname', 'website__name']
